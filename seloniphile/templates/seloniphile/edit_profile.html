@@ -206,16 +206,16 @@ body { background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important;
   <nav class="sidebar">
     <div class="logo">Kit<span>nagram</span></div>
     <div class="nav-links">
-      <a href="{% url 'home' %}"          class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+      <a href="{% url 'home' %}"          class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
       <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
       <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
       <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
       <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
       <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
+      <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+      <a href="{% url 'reel_create' %}"   class="nav-item"><span class="nav-icon"><i class="fa-solid fa-video"></i></span><span class="nav-label">Create Reel</span></a>
       <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
       <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
-      <a href="{% url 'reel_create' %}"   class="nav-item"><span class="nav-icon"><i class="fa-solid fa-video"></i></span><span class="nav-label">Create Reel</span></a>
-      <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
       <a href="{% url 'profile' %}" class="sidebar-profile-mini">
         <span class="nav-icon"><img src="{{uid.profile_pic.url}}" alt="Profile"></span>
         <span class="nav-label">Profile</span>
