@@ -268,4 +268,19 @@ class CreateStory(models.Model):
             
             else:
                 return str(years) + " years ago"
+            
+class ChatRoom(models.Model):
+    user1 = models.ForeignKey(InstaUser,on_delete=models.CASCADE,related_name="user_1_chat")
+    user2 = models.ForeignKey(InstaUser,on_delete=models.CASCADE,related_name="user_2_chat",null=True,blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Message(models.Model):
+    chat_room = models.ForeignKey(ChatRoom,on_delete=models.CASCADE,related_name="chatroom")
+    text_message = models.CharField(max_length=100)
+    image = models.FileField(null=True,blank=True)
+    video = models.FileField(null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True) 
+
+
 

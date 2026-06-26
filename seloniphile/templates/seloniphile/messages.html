@@ -185,27 +185,41 @@ body { background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important;
           </div>
         </div>
       </form>
-      <div class="convo-list">
-        <div class="convo-item active"><div class="convo-av online"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&q=80"></div><div class="convo-body"><div class="convo-top"><span class="convo-name">zara.kashyap</span><span class="convo-time">2m</span></div><div class="convo-preview">That photo came out amazing 🔥</div></div></div>
-        <div class="convo-item"><div class="convo-av"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80"></div><div class="convo-body"><div class="convo-top"><span class="convo-name">leo.winters</span><span class="convo-time">1h</span></div><div class="convo-preview unread">Are you coming to Kyoto?</div></div><span class="unread-dot"></span></div>
-        <div class="convo-item"><div class="convo-av online"><img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&q=80"></div><div class="convo-body"><div class="convo-top"><span class="convo-name">eli.rahman</span><span class="convo-time">3h</span></div><div class="convo-preview">Shared a photo with you</div></div></div>
-        <div class="convo-item"><div class="convo-av"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&q=80"></div><div class="convo-body"><div class="convo-top"><span class="convo-name">nora.f</span><span class="convo-time">5h</span></div><div class="convo-preview unread">Loved your latest post!</div></div><span class="unread-dot"></span></div>
-        <div class="convo-item"><div class="convo-av"><img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=150&q=80"></div><div class="convo-body"><div class="convo-top"><span class="convo-name">sofie.m</span><span class="convo-time">1d</span></div><div class="convo-preview">See you at the event 🎉</div></div></div>
-        <div class="convo-item"><div class="convo-av online"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80"></div><div class="convo-body"><div class="convo-top"><span class="convo-name">julian.b</span><span class="convo-time">2d</span></div><div class="convo-preview">Thanks for the follow!</div></div></div>
+      
+      <div class="convo-list" style="display: flex; flex-direction: column; gap: 10px;">
+      {% for user in following_users %}
+      <a href="{% url 'messages' pk=user.id  %}" style="text-decoration: none;">
+        <div class="convo-item active">
+          <div class="convo-av online">
+            <img src="{{user.profile_pic.url}}">
+          </div>
+          <div class="convo-body">
+            <div class="convo-top">
+              <span class="convo-name">{{user.username}}</span>
+              <span class="convo-time">{{created_at}}</span>
+            </div>
+            <div class="convo-preview">{{user.name}}</div>
+          </div> 
+        </div>
+      </a>
+      {% endfor %}
       </div>
+      
     </div>
+    {% if reciever %}
     <div class="chat-window">
       <div class="chat-header">
-        <div class="convo-av online" style="width:46px;height:46px;flex-shrink:0"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&q=80"></div>
-        <div><div class="chat-name">zara.kashyap</div><div class="chat-status">Active now</div></div>
+        <div class="convo-av online" style="width:46px;height:46px;flex-shrink:0"><img src="{{reciever.profile_pic.url}}"></div>
+        <div><div class="chat-name">{{reciever.username}}</div><div class="chat-status">Active now</div></div>
       </div>
+      {% if messages_m %}
       <div class="chat-messages">
         <div class="msg received"><div class="msg-av"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&q=80"></div><div class="msg-bubble">Hey! Did you see my latest post? 😊</div></div>
         <div class="msg sent"><div class="msg-bubble">Yes!! That Santorini shot is incredible 🌅</div></div>
-        <div class="msg received"><div class="msg-av"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&q=80"></div><div class="msg-bubble">Thank you! The golden hour lighting was perfect ✨</div></div>
-        <div class="msg sent"><div class="msg-bubble">You have the best eye for photography fr 📸</div></div>
-        <div class="msg received"><div class="msg-av"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&q=80"></div><div class="msg-bubble">That photo came out amazing 🔥</div></div>
-      </div>
+        </div>
+      {% else %}
+         <h1>no new messages  </h1>
+      {% endif %}
       <form method="post" action="#" style="margin:0;">
         <div class="chat-input-row">
           <input type="text" placeholder="Message…" class="chat-input" name="message">
@@ -213,6 +227,13 @@ body { background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important;
         </div>
       </form>
     </div>
+    {% else %}
+
+      <div class="chat-header" style="text-align: center;">
+        <h1> No conversition </h1>
+      </div>
+
+    {% endif %}
   </div>
 </div>
 </div>

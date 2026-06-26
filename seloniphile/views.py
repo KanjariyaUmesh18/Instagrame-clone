@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .models import *
 from django.contrib.auth.hashers import make_password,check_password
+from .utils import get_or_create_chatRoom
 
 # Create your views here.
 def checkLoggin(view_function):
@@ -139,11 +140,36 @@ def login(request):
     return render(request,'seloniphile/login.html')
 
 @checkLoggin
-def messages(request):
+def messages(request,pk=None):
     uid = request.uid
 
+    sender = InstaUser.objects.get(id = uid.id)
+    reciever = None
+
+    messages_m = None
+
+    print(sender)
+    following_list = FollowUserd.objects.filter(following = sender)
+    print(following_list)
+
+    following_users = [f.following_person for f in following_list]
+
+    print(following_users)
+
+    if pk:
+        reciever = InstaUser.objects.get(id=pk)
+
+        conversation_room = get_or_create_chatRoom(sender,reciever)
+
+        messages_m = Message.objects.filter(chat_room = conversation_room)
+
+    
     context = {
-         "uid" : uid
+        "uid" : uid,
+        "sender" : sender,
+        "following_users" : following_users,
+        "reciever" : reciever,
+        "messages_m" : messages_m
     }
     return render(request,'seloniphile/messages.html',context)
 

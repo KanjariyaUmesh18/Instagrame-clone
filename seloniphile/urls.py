@@ -25,6 +25,7 @@ urlpatterns = [
     path('explore/', views.explore, name='explore'),
     path('', views.login, name='login'),
     path('messages/', views.messages, name='messages'),
+    path('messages/<int:pk>', views.messages, name='messages'),
     path('notifications/', views.notifications, name='notifications'),
     path('profile/', views.profile, name='profile'),
     path('reels/', views.reels, name='reels'),
