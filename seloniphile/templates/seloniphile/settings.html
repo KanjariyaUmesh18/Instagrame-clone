@@ -1,37 +1,136 @@
 {% load static %}
 <html lang="en">
 <head>
-<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velora — Settings</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>✨ Kitnagram — Settings</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
-<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+<style>
+:root, [data-theme="dark"], [data-theme="light"] {
+  --bg:#f9f3e8; --bg2:rgba(255,248,238,0.95); --bg3:rgba(245,232,215,0.6);
+  --border:#e3cfbe; --text:#3d2c1e; --muted:#8b6e56; --accent:#b6845e;
+  --shadow:0 4px 20px rgba(140,90,50,0.12);
+}
+body { background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important; font-family: 'Segoe UI', Roboto, system-ui, sans-serif !important; }
+.sidebar { background: rgba(255,248,238,0.92) !important; backdrop-filter: blur(12px); border-right: 1px solid #e3cfbe !important; }
+.logo { color: transparent !important; background: linear-gradient(135deg, #5b3f2b, #b6845e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.logo span { background: linear-gradient(135deg, #b6845e, #8b5e3c); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-item { border-radius: 60px !important; color: #5a4030 !important; transition: all 0.2s !important; }
+.nav-item:hover, .nav-item.active { background: rgba(182,132,94,0.15) !important; color: #8b5e3c !important; transform: translateX(4px); }
+.nav-icon i { color: #a07050 !important; }
+.nav-item:hover .nav-icon i, .nav-item.active .nav-icon i { color: #b6845e !important; }
+.sidebar-profile-mini .nav-icon img { border: 2.5px solid #b6845e; border-radius: 50%; }
+.badge { background: #b6845e !important; } .badge.red { background: #c06040 !important; }
+.sidebar-divider { border-color: #e3cfbe !important; }
+.theme-toggle { display: none !important; }
+.pages-wrapper, .page { background: transparent !important; }
+
+/* ── Settings specific ── */
+.settings-content {
+  padding: 2rem;
+  max-width: 800px;
+  width: 100%;
+  animation: floatIn 0.7s cubic-bezier(0.23,1,0.32,1);
+}
+@keyframes floatIn { 0% { opacity:0; transform:translateY(20px); } 100% { opacity:1; transform:translateY(0); } }
+
+.settings-page-header {
+  display: flex; align-items: center; gap: 0.7rem;
+  margin-bottom: 0.4rem;
+  font-size: 1.7rem; font-weight: 600;
+  background: linear-gradient(135deg, #5b3f2b, #8b5e3c);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.settings-page-header i { color: #c27f5a; -webkit-text-fill-color: #c27f5a; animation: gentlePulse 3s infinite; }
+@keyframes gentlePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.settings-page-sub { color: #8b6040; font-size: 0.88rem; margin-bottom: 1.6rem; }
+.settings-divider { border: none; border-top: 2px dashed #e8d5c0; margin-bottom: 1.5rem; }
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+}
+.settings-card {
+  background: rgba(255,250,240,0.75);
+  backdrop-filter: blur(10px);
+  border-radius: 32px;
+  padding: 1.6rem 1.8rem;
+  border: 1px solid rgba(255,225,200,0.5);
+  box-shadow: 0 12px 30px -10px rgba(140,90,50,0.12), 0 0 0 1px rgba(255,215,175,0.2) inset;
+  transition: all 0.2s;
+}
+.settings-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px -10px rgba(140,90,50,0.18); }
+.settings-card-title {
+  font-size: 1.05rem; font-weight: 700; color: #3d2c1e;
+  margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem;
+}
+.settings-card-title i { color: #a07050; }
+
+.form-group { margin-bottom: 1rem; }
+.form-label { display: block; font-weight: 500; color: #3b2b1d; font-size: 0.85rem; margin-bottom: 0.4rem; letter-spacing: 0.2px; }
+.form-input {
+  width: 100%; padding: 0.8rem 1rem; border: 2px solid #e3cfbe; border-radius: 60px;
+  background: rgba(255,245,235,0.7); font-size: 0.9rem; color: #281f18;
+  outline: none; transition: all 0.2s; font-family: inherit;
+}
+.form-input:focus { border-color: #b8865f; background: #fffcf7; box-shadow: 0 4px 12px rgba(160,100,60,0.1); }
+
+.toggle-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.7rem 0; border-bottom: 1px dashed rgba(227,207,190,0.5);
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle-row span { font-size: 0.9rem; color: #4f3a2a; font-weight: 500; }
+.toggle {
+  width: 44px; height: 24px; border-radius: 20px;
+  background: rgba(227,207,190,0.8); position: relative; cursor: pointer;
+  transition: all 0.2s; box-shadow: 0 2px 6px rgba(140,90,50,0.1) inset;
+}
+.toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 20px; height: 20px; border-radius: 50%; background: #fff;
+  transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.toggle.on { background: #b6845e; }
+.toggle.on::after { left: 22px; }
+
+.publish-btn {
+  width: 100%; padding: 0.85rem; border: 1px solid #dbb08c; border-radius: 60px;
+  background: #b6845e; color: #fef7ef; font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; font-family: inherit; transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(150,90,50,0.2); margin-top: 0.5rem;
+}
+.publish-btn:hover { background: #a4714b; transform: scale(1.02); }
+.danger-btn {
+  width: 100%; padding: 0.85rem; border: 1.5px solid rgba(180,100,80,0.3); border-radius: 60px;
+  background: rgba(200,80,60,0.08); color: #b64a30; font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; font-family: inherit; transition: all 0.2s; margin-top: 0.5rem;
+}
+.danger-btn:hover { background: rgba(200,80,60,0.12); color: #c06040; border-color: rgba(180,100,80,0.5); }
+
+@media (max-width: 800px) {
+  .settings-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-
-<!-- ══ LEFT SIDEBAR ══════════════════════════════ -->
 <nav class="sidebar">
   <div class="logo">Kit<span>nagram</span></div>
   <div class="nav-links">
-    <a href="{% url 'home' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+    <a href="{% url 'home' %}"          class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
     <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
     <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
     <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
     <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
     <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
-    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
     <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
+    <a href="{% url 'reel_create' %}"   class="nav-item"><span class="nav-icon"><i class="fa-solid fa-video"></i></span><span class="nav-label">Create Reel</span></a>
     <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
     <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
     <a href="{% url 'profile' %}" class="sidebar-profile-mini">
-      <span class="nav-icon">
-        
-        <img src="{{uid.profile_pic.url}}" alt="Profile">
-              </span>
+      <span class="nav-icon"><img src="{{uid.profile_pic.url}}" alt="Profile"></span>
       <span class="nav-label">Profile</span>
     </a>
   </div>
@@ -42,91 +141,58 @@
   </div>
 </nav>
 
-<!-- ══ ALL PAGES ══════════════════════════════════ -->
 <div class="pages-wrapper">
-
-<!-- ── SETTINGS ─────────────────────────────────── -->
 <div id="settings" class="page page-full" style="display:block;">
-  <div class="page-content narrow">
-    <div class="page-header"><i class="fa-solid fa-gear"></i> Settings</div>
+  <div class="settings-content">
+    <div class="settings-page-header"><i class="fa-solid fa-gear"></i> Settings</div>
+    <div class="settings-page-sub">Manage your preferences and account settings ✨</div>
+    <hr class="settings-divider">
+
     <div class="settings-grid">
       <form method="post" action="#">
-        
+        {% csrf_token %}
         <input type="hidden" name="section" value="account">
         <div class="settings-card">
           <div class="settings-card-title"><i class="fa-solid fa-user"></i> Account</div>
-          <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" value="Aria Velora" name="fullname"></div>
-          <div class="form-group"><label class="form-label">Username</label><input class="form-input" value="aria.velora" name="username"></div>
-          <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" value="aria@velora.me" name="email"></div>
-          <div class="form-group"><label class="form-label">Bio</label><input class="form-input" value="✈️ Traveling the world one frame at a time. Based in Mumbai." name="bio"></div>
-          <button type="submit" class="publish-btn" style="margin-top:4px">Save Changes</button>
+          <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" value="{{uid.name}}" name="fullname"></div>
+          <div class="form-group"><label class="form-label">Username</label><input class="form-input" value="{{uid.username}}" name="username"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" value="{{uid.email}}" name="email"></div>
+          <button type="submit" class="publish-btn">Save Changes</button>
         </div>
       </form>
+
       <form method="post" action="#">
-        
+        {% csrf_token %}
         <input type="hidden" name="section" value="privacy">
         <div class="settings-card">
           <div class="settings-card-title"><i class="fa-solid fa-lock"></i> Privacy &amp; Security</div>
-          <div class="toggle-row"><span>Private Account</span><div class="toggle" data-name="private_account"></div></div>
-          <div class="toggle-row"><span>Activity Status</span><div class="toggle on" data-name="activity_status"></div></div>
-          <div class="toggle-row"><span>Two-Factor Auth</span><div class="toggle" data-name="two_factor"></div></div>
-          <div class="form-group" style="margin-top:18px"><label class="form-label">Story Visibility</label><select class="form-input" name="story_visibility"><option>Everyone</option><option>Followers Only</option><option>Close Friends</option></select></div>
+          <div class="toggle-row"><span>Private Account</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span>Activity Status</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span>Two-Factor Auth</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          <div class="form-group" style="margin-top:1rem;"><label class="form-label">Story Visibility</label><select class="form-input" name="story_visibility"><option>Everyone</option><option>Followers Only</option><option>Close Friends</option></select></div>
         </div>
       </form>
+
       <form method="post" action="#">
-        
+        {% csrf_token %}
         <input type="hidden" name="section" value="notifications">
         <div class="settings-card">
           <div class="settings-card-title"><i class="fa-solid fa-bell"></i> Notifications</div>
-          <div class="toggle-row"><span>Likes &amp; Reactions</span><div class="toggle on" data-name="likes_reactions"></div></div>
-          <div class="toggle-row"><span>Comments</span><div class="toggle on" data-name="comments"></div></div>
-          <div class="toggle-row"><span>New Followers</span><div class="toggle on" data-name="new_followers"></div></div>
-          <div class="toggle-row"><span>Direct Messages</span><div class="toggle on" data-name="direct_messages"></div></div>
-          <div class="toggle-row"><span>Email Digest</span><div class="toggle" data-name="email_digest"></div></div>
+          <div class="toggle-row"><span>Likes &amp; Reactions</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span>Comments</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span>New Followers</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="toggle-row"><span>Direct Messages</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
         </div>
       </form>
-      <form method="post" action="#">
-        
-        <input type="hidden" name="section" value="appearance">
-        <div class="settings-card">
-          <div class="settings-card-title"><i class="fa-solid fa-palette"></i> Appearance</div>
-          <div class="form-group"><label class="form-label">Language</label><select class="form-input" name="language"><option>English</option><option>Hindi</option><option>French</option><option>Spanish</option></select></div>
-          <div class="toggle-row"><span>Dark Mode</span><div class="toggle" data-name="dark_mode"></div></div>
-          <div class="toggle-row"><span>Reduced Motion</span><div class="toggle" data-name="reduced_motion"></div></div>
-        </div>
-      </form>
-      <form method="post" action="#">
-        
-        
-      </form>
+
+      <div class="settings-card">
+        <div class="settings-card-title"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</div>
+        <p style="font-size:0.85rem; color:#8b6040; margin-bottom:1rem;">Once you delete your account, there is no going back. Please be certain.</p>
+        <button type="button" class="danger-btn">Delete Account</button>
+      </div>
     </div>
   </div>
 </div>
-
-</div><!-- /pages-wrapper -->
-
-<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
-
-<script>
-(function() {
-  var saved = localStorage.getItem('velora-theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  updateIcon(saved);
-  function updateIcon(t) {
-    var ic = document.getElementById('themeIcon');
-    if (ic) ic.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
-  window.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('themeToggle');
-    if (btn) btn.addEventListener('click', function() {
-      var cur = document.documentElement.getAttribute('data-theme');
-      var next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('velora-theme', next);
-      updateIcon(next);
-    });
-  });
-})();
-</script>
+</div>
 </body>
 </html>

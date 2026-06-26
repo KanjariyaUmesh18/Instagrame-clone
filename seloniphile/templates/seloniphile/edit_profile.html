@@ -1,128 +1,297 @@
 {% load static %}
 <html lang="en">
-
 <head>
-<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Kitnagram — Edit Profile</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+<style>
+:root, [data-theme="dark"], [data-theme="light"] {
+  --bg:#f9f3e8; --bg2:rgba(255,248,238,0.95); --bg3:rgba(245,232,215,0.6);
+  --border:#e3cfbe; --text:#3d2c1e; --muted:#8b6e56; --accent:#b6845e;
+  --shadow:0 4px 20px rgba(140,90,50,0.12);
+}
+body { background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important; font-family: 'Segoe UI', Roboto, system-ui, sans-serif !important; }
+.sidebar { background: rgba(255,248,238,0.92) !important; backdrop-filter: blur(12px); border-right: 1px solid #e3cfbe !important; }
+.logo { color: transparent !important; background: linear-gradient(135deg, #5b3f2b, #b6845e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.logo span { background: linear-gradient(135deg, #b6845e, #8b5e3c); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-item { border-radius: 60px !important; color: #5a4030 !important; transition: all 0.2s !important; }
+.nav-item:hover, .nav-item.active { background: rgba(182,132,94,0.15) !important; color: #8b5e3c !important; transform: translateX(4px); }
+.nav-icon i { color: #a07050 !important; }
+.nav-item:hover .nav-icon i, .nav-item.active .nav-icon i { color: #b6845e !important; }
+.sidebar-profile-mini .nav-icon img { border: 2.5px solid #b6845e; border-radius: 50%; }
+.badge { background: #b6845e !important; } .badge.red { background: #c06040 !important; }
+.sidebar-divider { border-color: #e3cfbe !important; }
+.theme-toggle { display: none !important; }
+.pages-wrapper, .page { background: transparent !important; }
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Velora — Edit Profile</title>
+/* ── Edit Profile specific ── */
+.edit-content-wrap {
+  max-width: 620px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  animation: floatIn 0.7s cubic-bezier(0.23,1,0.32,1);
+}
+@keyframes floatIn {
+  0%   { opacity: 0; transform: translateY(30px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+.ep-header-row {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 2px dashed #e8d5c0;
+}
+.back-btn {
+  width: 44px; height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(245,232,215,0.6);
+  border-radius: 50%;
+  text-decoration: none;
+  color: #7a5038;
+  border: 1.5px solid #e3cfbe;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.back-btn:hover { background: rgba(182,132,94,0.15); border-color: #b6845e; color: #b6845e; transform: scale(1.05); }
+
+.ep-title {
+  font-size: 1.6rem; font-weight: 600;
+  background: linear-gradient(135deg, #5b3f2b, #8b5e3c);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.ep-title i { font-size: 1.3rem; color: #c27f5a; -webkit-text-fill-color: #c27f5a; }
+.ep-badge {
+  margin-left: auto;
+  background: #dcc9b6; padding: 0.3rem 1rem;
+  border-radius: 60px; font-size: 0.8rem; font-weight: 500;
+  color: #2f241b; border: 1px solid #f3e0d0;
+  animation: shimmerBadge 3s infinite;
+}
+@keyframes shimmerBadge {
+  0% { background: #dcc9b6; }
+  50% { background: #e8d6c4; box-shadow: 0 0 6px #dbaa88; }
+  100% { background: #dcc9b6; }
+}
+
+.ep-card {
+  background: rgba(255,250,240,0.75);
+  backdrop-filter: blur(10px);
+  border-radius: 40px;
+  padding: 2rem 2.2rem 2.4rem;
+  box-shadow: 0 20px 40px -15px rgba(0,0,0,0.18),
+              0 0 0 1px rgba(255,215,175,0.3) inset;
+  border: 1px solid rgba(255,225,200,0.5);
+}
+
+/* Avatar section */
+.ep-av-section {
+  display: flex; align-items: center; gap: 1.4rem;
+  margin-bottom: 1.8rem; padding-bottom: 1.4rem;
+  border-bottom: 1px solid rgba(227,207,190,0.5);
+}
+.ep-av-wrap { position: relative; }
+.ep-av {
+  width: 84px; height: 84px; border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fffaf5;
+  box-shadow: 0 4px 16px rgba(140,90,50,0.2), 0 0 0 2px #b6845e;
+}
+.ep-av-btn {
+  position: absolute; bottom: 2px; right: 2px;
+  width: 28px; height: 28px;
+  background: #b6845e; border-radius: 50%;
+  border: 2px solid #fffaf5;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.75rem; cursor: pointer;
+  transition: all 0.2s; box-shadow: 0 2px 8px rgba(140,90,50,0.3);
+}
+.ep-av-btn:hover { background: #a4714b; transform: scale(1.1); }
+.ep-av-name { font-weight: 700; color: #3d2c1e; font-size: 1.1rem; }
+.ep-av-hint { font-size: 0.82rem; color: #8b6040; margin-top: 3px; }
+
+/* Form */
+.ep-form { display: flex; flex-direction: column; gap: 0; }
+.ep-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+.form-group { margin-bottom: 1.2rem; }
+.form-label {
+  display: block; font-weight: 500; color: #3b2b1d;
+  font-size: 0.9rem; margin-bottom: 0.5rem; letter-spacing: 0.2px;
+}
+.form-input {
+  width: 100%;
+  padding: 0.9rem 1.3rem;
+  border: 2px solid #e3cfbe;
+  border-radius: 60px;
+  background: rgba(255,245,235,0.7);
+  backdrop-filter: blur(4px);
+  font-size: 0.95rem;
+  color: #281f18;
+  outline: none;
+  transition: all 0.2s;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(180,130,90,0.04);
+}
+.form-input:focus {
+  border-color: #b8865f;
+  background: #fffcf7;
+  box-shadow: 0 6px 16px rgba(160,100,60,0.12), 0 0 0 4px rgba(200,150,110,0.12);
+  transform: scale(1.01);
+}
+.form-input::placeholder { color: #b09080; }
+
+.form-input-icon { position: relative; }
+.input-prefix {
+  position: absolute; left: 1.2rem; top: 50%;
+  transform: translateY(-50%);
+  color: #a07050; font-weight: 600; font-size: 0.95rem;
+  pointer-events: none;
+}
+.prefix-input { padding-left: 2.2rem; }
+
+/* Actions */
+.ep-actions {
+  display: flex; gap: 1rem; margin-top: 1.6rem;
+  flex-wrap: wrap;
+}
+.cancel-btn {
+  flex: 1; min-width: 120px;
+  padding: 0.9rem 1.4rem;
+  border: 1.5px solid #e3cfbe;
+  border-radius: 60px;
+  background: rgba(235,215,195,0.5);
+  color: #5a4030; font-weight: 600;
+  text-align: center; text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.cancel-btn:hover { background: #dcc2ae; transform: translateY(-2px); border-color: #be9f87; }
+
+.publish-btn {
+  flex: 2; min-width: 160px;
+  padding: 0.9rem 1.4rem;
+  border: 1px solid #dbb08c;
+  border-radius: 60px;
+  background: #b6845e;
+  color: #fef7ef; font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  box-shadow: 0 8px 16px -6px rgba(150,90,50,0.25);
+  transition: all 0.2s;
+}
+.publish-btn:hover { background: #a4714b; transform: scale(1.02) translateY(-3px); box-shadow: 0 14px 26px -8px rgba(140,80,40,0.32); }
+
+/* decorative dots */
+.ep-footer { margin-top: 1.8rem; display: flex; justify-content: flex-end; gap: 0.4rem; }
+.dot { width: 8px; height: 8px; background: #c8ad95; border-radius: 60px; display: inline-block; animation: dotWave 1.8s infinite alternate ease-in-out; }
+.dot:nth-child(2) { animation-delay: 0.2s; background: #b58b6f; }
+.dot:nth-child(3) { animation-delay: 0.4s; background: #a07658; }
+.dot:nth-child(4) { animation-delay: 0.6s; background: #936a4d; }
+.dot:nth-child(5) { animation-delay: 0.8s; background: #815f44; }
+@keyframes dotWave { 0% { transform: translateY(0) scale(0.8); opacity: 0.3; } 100% { transform: translateY(-6px) scale(1.2); opacity: 1; } }
+
+@media (max-width: 600px) {
+  .ep-form-row { grid-template-columns: 1fr; }
+  .ep-card { padding: 1.5rem 1.2rem; border-radius: 28px; }
+}
+</style>
 </head>
-
 <body>
-
-  <!-- ✅ SIDEBAR -->
+  <!-- Sidebar -->
   <nav class="sidebar">
     <div class="logo">Kit<span>nagram</span></div>
-
     <div class="nav-links">
       <a href="{% url 'home' %}"          class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
-    <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
-    <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
-    <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
-    <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
-    <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
-    <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
-    <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
-    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
-    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
-    <a href="{% url 'profile' %}"class="sidebar-profile-mini">
-        <span class="nav-icon">
-          
-        <img src="{{uid.profile_pic.url}}" alt="Profile">
-                </span>
+      <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+      <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
+      <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
+      <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
+      <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
+      <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
+      <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
+      <a href="{% url 'reel_create' %}"   class="nav-item"><span class="nav-icon"><i class="fa-solid fa-video"></i></span><span class="nav-label">Create Reel</span></a>
+      <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+      <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+        <span class="nav-icon"><img src="{{uid.profile_pic.url}}" alt="Profile"></span>
         <span class="nav-label">Profile</span>
       </a>
     </div>
     <div class="sidebar-divider"></div>
     <div class="nav-bottom">
-      <a href="{% url 'settings' %}" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
-      <a href="{% url 'login' %}" class="nav-item logout-btn">
-        <i class="fa-solid fa-right-from-bracket"></i> Logout
-      </a>
+      <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+      <a href="{% url 'login' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
     </div>
   </nav>
 
-  <!-- ✅ MAIN WRAPPER -->
   <div class="pages-wrapper">
-
     <div class="page page-full" style="display:flex; justify-content:center; width:100%;">
+      <div class="edit-content-wrap">
 
-      <div class="page-content narrow" style="margin:0 auto;">
+        <!-- Header -->
+        <div class="ep-header-row">
+          <a href="{% url 'profile' %}" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+          <div class="ep-title"><i class="fa-solid fa-pen-to-square"></i> Edit Profile</div>
+          <span class="ep-badge"><i class="far fa-clock" style="margin-right:5px;"></i> edit</span>
+        </div>
 
-        <!-- FORM -->
+        <!-- Form card -->
         <form method="post" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
-        {% csrf_token %} 
-          <div class="page-header-row">
-            <a href="{% url 'profile' %}" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-            <div class="page-header" style="margin-bottom:0">
-              <i class="fa-solid fa-pen"></i> Edit Profile
-            </div>
-          </div>
-
-          <div class="edit-profile-card">
-
-            <!-- IMAGE -->
-            <div class="edit-av-section">
-              <div class="edit-av-wrap">
-                <img src="{{uid.profile_pic.url}}" class="edit-av" alt="aria.velora">
-                
-                                <label class="edit-av-btn">
+          {% csrf_token %}
+          <div class="ep-card">
+            <!-- Avatar -->
+            <div class="ep-av-section">
+              <div class="ep-av-wrap">
+                <img src="{{uid.profile_pic.url}}" class="ep-av" alt="avatar">
+                <label class="ep-av-btn">
                   <i class="fa-solid fa-camera"></i>
                   <input type="file" style="display:none" name="profile_pic">
                 </label>
               </div>
-
-              <div class="edit-av-info">
-                <div class="edit-av-name">{{uid.username}}</div>
+              <div>
+                <div class="ep-av-name">{{uid.username}}</div>
+                <div class="ep-av-hint">Click camera to change photo</div>
               </div>
             </div>
 
-            <div class="edit-divider"></div>
-
-            <!-- FORM -->
-            <div class="edit-form">
-
-              <div class="edit-form-row">
+            <!-- Fields -->
+            <div class="ep-form">
+              <div class="ep-form-row">
                 <div class="form-group">
                   <label class="form-label">Full Name</label>
-                  <input class="form-input" value="{{uid.name}}" name="name" required>
+                  <input class="form-input" value="{{uid.name}}" name="name" placeholder="Your full name" required>
                 </div>
-
                 <div class="form-group">
                   <label class="form-label">Username</label>
                   <div class="form-input-icon">
                     <span class="input-prefix">@</span>
-                    <input class="form-input prefix-input" value="{{uid.username}}" name="username" required>
+                    <input class="form-input prefix-input" value="{{uid.username}}" name="username" placeholder="username" required>
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <label class="form-label">Bio</label>
-                <input class="form-input" value="{{uid.bio}}" name="bio">
+                <input class="form-input" value="{{uid.bio}}" name="bio" placeholder="Tell the world about yourself…">
               </div>
 
-              <div class="edit-form-row">
+              <div class="ep-form-row">
                 <div class="form-group">
-                  <label class="form-label">Link</label>
-                  <input class="form-input" value="{{uid.link}}" name="link">
+                  <label class="form-label">Website / Link</label>
+                  <input class="form-input" value="{{uid.link}}" name="link" placeholder="https://yourwebsite.com">
                 </div>
-
                 <div class="form-group">
                   <label class="form-label">Description</label>
-                  <input class="form-input" value="{{uid.description}}" name="description">
+                  <input class="form-input" value="{{uid.description}}" name="description" placeholder="Short description…">
                 </div>
               </div>
 
-              <!-- BUTTON -->
-              <div class="edit-form-actions">
+              <!-- Actions -->
+              <div class="ep-actions">
                 <a href="{% url 'profile' %}" class="cancel-btn">Cancel</a>
                 <button type="submit" class="publish-btn">
                   <i class="fa-solid fa-check"></i> Save Changes
@@ -130,37 +299,15 @@
               </div>
             </div>
           </div>
-
         </form>
 
+        <!-- Decorative dots -->
+        <div class="ep-footer">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="dot"></span><span class="dot"></span>
+        </div>
       </div>
     </div>
   </div>
-
-
-<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
-
-<script>
-(function() {
-  var saved = localStorage.getItem('velora-theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  updateIcon(saved);
-  function updateIcon(t) {
-    var ic = document.getElementById('themeIcon');
-    if (ic) ic.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
-  window.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('themeToggle');
-    if (btn) btn.addEventListener('click', function() {
-      var cur = document.documentElement.getAttribute('data-theme');
-      var next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('velora-theme', next);
-      updateIcon(next);
-    });
-  });
-})();
-</script>
 </body>
-
 </html>

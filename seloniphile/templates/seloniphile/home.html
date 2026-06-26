@@ -1,26 +1,300 @@
 {% load static %}
 <html lang="en">
 <head>
-<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velora — Home</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>✨ Kitnagram — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+<style>
+/* ══ WARM DESIGN SYSTEM OVERRIDE ══ */
+:root, [data-theme="dark"], [data-theme="light"] {
+  --bg:        #f9f3e8;
+  --bg2:       rgba(255,248,238,0.95);
+  --bg3:       rgba(245,232,215,0.6);
+  --border:    #e3cfbe;
+  --text:      #3d2c1e;
+  --muted:     #8b6e56;
+  --accent:    #b6845e;
+  --accent2:   #d4956a;
+  --green:     #7a9a6a;
+  --shadow:    0 4px 20px rgba(140,90,50,0.12);
+}
+
+body {
+  background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important;
+  font-family: 'Segoe UI', Roboto, system-ui, sans-serif !important;
+}
+
+/* ── Sidebar warm ── */
+.sidebar {
+  background: rgba(255,248,238,0.92) !important;
+  backdrop-filter: blur(12px);
+  border-right: 1px solid #e3cfbe !important;
+  box-shadow: 2px 0 20px rgba(140,90,50,0.07) !important;
+}
+.logo { color: transparent !important; background: linear-gradient(135deg, #5b3f2b, #b6845e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.logo span { background: linear-gradient(135deg, #b6845e, #8b5e3c); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-item { border-radius: 60px !important; color: #5a4030 !important; transition: all 0.2s ease !important; }
+.nav-item:hover, .nav-item.active { background: rgba(182,132,94,0.15) !important; color: #8b5e3c !important; transform: translateX(4px); }
+.nav-icon i { color: #a07050 !important; }
+.nav-item:hover .nav-icon i, .nav-item.active .nav-icon i { color: #b6845e !important; }
+.sidebar-profile-mini .nav-icon img { border: 2.5px solid #b6845e; border-radius: 50%; }
+.badge { background: #b6845e !important; }
+.badge.red { background: #c06040 !important; }
+.sidebar-divider { border-color: #e3cfbe !important; }
+.logout-btn:hover { background: rgba(190,80,60,0.1) !important; color: #8b3020 !important; }
+
+/* ── pages-wrapper ── */
+.pages-wrapper { background: transparent !important; }
+.page { background: transparent !important; }
+
+/* ── Stories row ── */
+.stories-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem 0 0.8rem;
+  scrollbar-width: none;
+}
+.stories-row::-webkit-scrollbar { display: none; }
+
+.story-pill {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.story-av {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.story-av:hover { transform: scale(1.06); }
+.story-av img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #fffaf5;
+}
+.story-av.ring img { border: 3px solid transparent; background: linear-gradient(#fffaf5,#fffaf5) padding-box, linear-gradient(135deg, #f09433, #e6683c, #dc2743, #b6845e) border-box; }
+.your-story .story-av img { border: 3px solid #e3cfbe; }
+
+.add-icon {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 22px; height: 22px;
+  background: #b6845e;
+  border-radius: 50%;
+  border: 2px solid #fffaf5;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 700; color: #fff;
+  text-decoration: none;
+  line-height: 1;
+}
+.add-icon a { color: #fff; text-decoration: none; font-weight: 700; font-size: 1rem; }
+.story-pill span { font-size: 0.75rem; color: #6b4f3a; text-align: center; max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.your-story span { color: #8b6040; font-weight: 500; }
+
+/* ── Feed area ── */
+.feed-area { max-width: 640px; width: 100%; padding: 1.5rem 1.5rem 2rem; }
+
+/* ── Post card ── */
+.post-card {
+  background: rgba(255,250,240,0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 28px;
+  border: 1px solid rgba(255,225,200,0.5);
+  box-shadow: 0 8px 30px -10px rgba(140,90,50,0.15), 0 0 0 1px rgba(255,215,175,0.2) inset;
+  margin-bottom: 1.8rem;
+  overflow: hidden;
+  animation: floatIn 0.6s cubic-bezier(0.23,1,0.32,1);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.post-card:hover { box-shadow: 0 16px 40px -10px rgba(140,90,50,0.22); transform: translateY(-2px); }
+@keyframes floatIn {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.post-head {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 1rem 1.2rem;
+}
+.post-av { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 2px solid #e3cfbe; flex-shrink: 0; }
+.post-av img { width: 100%; height: 100%; object-fit: cover; }
+.post-info { flex: 1; }
+.post-name { font-weight: 600; color: #3d2c1e; font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem; }
+.verified { color: #b6845e; font-size: 0.8rem; }
+.post-loc { font-size: 0.78rem; color: #8b6040; display: flex; align-items: center; gap: 0.3rem; margin-top: 1px; }
+.more-btn { background: none; border: none; color: #a07050; cursor: pointer; font-size: 1.2rem; padding: 0.4rem; border-radius: 50%; transition: all 0.2s; }
+.more-btn:hover { background: rgba(182,132,94,0.1); color: #8b5e3c; }
+
+.post-img-box { position: relative; overflow: hidden; }
+.post-img { width: 100%; display: block; max-height: 560px; object-fit: cover; }
+.img-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(40,20,0,0.15) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.post-foot { padding: 0.8rem 1.2rem 1rem; }
+.actions-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+.left-actions { display: flex; align-items: center; gap: 0.3rem; }
+.act-btn {
+  background: none; border: none; color: #7a5038; cursor: pointer;
+  font-size: 1.4rem; padding: 0.4rem; border-radius: 50%;
+  transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;
+  text-decoration: none;
+}
+.act-btn:hover { background: rgba(182,132,94,0.12); color: #c06050; transform: scale(1.1); }
+.act-btn.like-btn:hover { color: #c0504a; }
+.save-btn:hover { color: #b6845e; }
+.saved i { font-weight: 900; color: #b6845e; }
+
+/* comment inline form */
+.comment-form { display: flex; align-items: center; gap: 0.4rem; }
+.comment-icon { color: #a07050; font-size: 1.3rem; cursor: pointer; padding: 0.3rem; }
+.comment-input {
+  border: none; outline: none; background: rgba(245,232,215,0.6);
+  border-radius: 60px; padding: 0.45rem 1rem;
+  color: #3d2c1e; font-size: 0.88rem; font-family: inherit;
+  width: 130px; transition: all 0.2s;
+}
+.comment-input:focus { background: rgba(245,232,215,0.9); width: 180px; }
+.comment-btn {
+  border: none; background: none; color: #b6845e;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: color 0.2s;
+}
+.comment-btn:hover { color: #8b5e3c; }
+
+.likes-count { font-weight: 600; color: #3d2c1e; font-size: 0.9rem; margin-bottom: 0.4rem; }
+.caption { font-size: 0.9rem; color: #4f3a2a; line-height: 1.5; }
+.caption strong { color: #3d2c1e; font-weight: 600; margin-right: 0.3rem; }
+.comments-peek { font-size: 0.84rem; color: #8b6040; margin-top: 0.5rem; cursor: pointer; transition: color 0.2s; }
+.comments-peek:hover { color: #b6845e; }
+.time-stamp { font-size: 0.76rem; color: #b09080; margin-top: 0.3rem; letter-spacing: 0.2px; }
+
+/* comment section */
+.comment-section { display: none; padding: 0.6rem 1.2rem 0.8rem; border-top: 1px solid rgba(227,207,190,0.5); }
+.comment-list { max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 0.7rem; }
+.comment-item { display: flex; gap: 0.7rem; align-items: flex-start; }
+.comment-av { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #e3cfbe; }
+.comment-body { flex: 1; }
+.comment-name { font-weight: 600; font-size: 0.84rem; color: #3d2c1e; }
+.comment-text { font-size: 0.84rem; color: #4f3a2a; line-height: 1.4; }
+.comment-time { font-size: 0.72rem; color: #b09080; margin-top: 2px; }
+.comment-input-row { display: flex; align-items: center; gap: 0.7rem; }
+.comment-input-row img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #e3cfbe; }
+.comment-input-row .comment-input { flex: 1; width: auto; }
+.comment-post-btn { border: none; background: none; color: #b6845e; font-weight: 600; font-size: 0.88rem; cursor: pointer; font-family: inherit; }
+.comment-post-btn:hover { color: #8b5e3c; }
+
+/* ── Right panel ── */
+.right-panel {
+  width: var(--panel-w); flex-shrink: 0;
+  padding: 1.8rem 1.5rem;
+  background: transparent;
+  height: fit-content;
+  position: sticky; top: 0;
+}
+.my-profile-card {
+  display: flex; align-items: center; gap: 0.9rem;
+  background: rgba(255,250,240,0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 20px; padding: 1rem 1.2rem;
+  border: 1px solid rgba(255,225,200,0.5);
+  box-shadow: 0 4px 20px rgba(140,90,50,0.08);
+  margin-bottom: 1.2rem;
+  animation: floatIn 0.7s cubic-bezier(0.23,1,0.32,1);
+}
+.my-av-wrap { position: relative; }
+.my-av { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2.5px solid #b6845e; }
+.my-details { flex: 1; }
+.my-name { font-weight: 700; color: #3d2c1e; font-size: 0.95rem; }
+.my-handle { font-size: 0.82rem; color: #8b6040; margin-top: 1px; }
+.switch-btn {
+  color: #b6845e; font-size: 0.82rem; font-weight: 600;
+  text-decoration: none; border: 1.5px solid #e3cfbe;
+  padding: 0.3rem 0.9rem; border-radius: 60px;
+  background: rgba(245,232,215,0.5); transition: all 0.2s;
+}
+.switch-btn:hover { background: rgba(182,132,94,0.15); border-color: #b6845e; }
+
+.panel-divider { border: none; border-top: 2px dashed #e8d5c0; margin: 1rem 0; }
+
+/* stats */
+.stats-row { display: flex; gap: 0.6rem; }
+.stat-box {
+  flex: 1; text-align: center; padding: 0.9rem 0.5rem;
+  background: rgba(255,250,240,0.7); border-radius: 16px;
+  border: 1px solid rgba(255,225,200,0.5);
+  box-shadow: 0 2px 10px rgba(140,90,50,0.06);
+  transition: all 0.2s;
+}
+.stat-box:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(140,90,50,0.12); }
+.stat-num { font-weight: 700; color: #3d2c1e; font-size: 1.2rem; }
+.stat-lbl { font-size: 0.75rem; color: #8b6040; margin-top: 2px; letter-spacing: 0.3px; }
+
+/* suggestions */
+.suggest-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+.suggest-head span { font-weight: 600; color: #3d2c1e; font-size: 0.9rem; }
+.see-all-link { font-size: 0.82rem; color: #b6845e; text-decoration: none; font-weight: 600; transition: color 0.2s; }
+.see-all-link:hover { color: #8b5e3c; }
+.suggest-list { display: flex; flex-direction: column; gap: 0; }
+.suggest-item {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid rgba(227,207,190,0.4);
+  transition: all 0.15s;
+}
+.suggest-item:last-child { border-bottom: none; }
+.suggest-item:hover { padding-left: 0.3rem; }
+.sug-av { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #e3cfbe; }
+.sug-av img { width: 100%; height: 100%; object-fit: cover; }
+.sug-info { flex: 1; min-width: 0; }
+.sug-name { font-weight: 600; color: #3d2c1e; font-size: 0.88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sug-note { font-size: 0.77rem; color: #8b6040; margin-top: 1px; }
+.follow-btn {
+  font-size: 0.82rem; font-weight: 700;
+  color: #b6845e; text-decoration: none;
+  border: 1.5px solid #e3cfbe;
+  padding: 0.3rem 0.9rem; border-radius: 60px;
+  background: rgba(245,232,215,0.4);
+  transition: all 0.2s; white-space: nowrap;
+}
+.follow-btn:hover { background: rgba(182,132,94,0.15); border-color: #b6845e; }
+
+/* hide theme toggle */
+.theme-toggle { display: none !important; }
+
+@media (max-width: 900px) { .right-panel { display: none; } }
+@media (max-width: 768px) {
+  .feed-area { padding: 1rem; }
+  .post-card { border-radius: 20px; }
+  .story-av { width: 54px; height: 54px; }
+}
+</style>
 </head>
 <body>
 <nav class="sidebar">
   <div class="logo">Kit<span>nagram</span></div>
   <div class="nav-links">
-    <a href="{% url 'home' %}"          class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+    <a href="{% url 'home' %}"          class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
     <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
     <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
     <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
     <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
     <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
     <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
-    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
+    <a href="{% url 'reel_create' %}"   class="nav-item"><span class="nav-icon"><i class="fa-solid fa-video"></i></span><span class="nav-label">Create Reel</span></a>
     <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
     <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
     <a href="{% url 'profile' %}" class="sidebar-profile-mini">
@@ -38,17 +312,17 @@
 <div id="home" class="page page-with-panel" style="display:flex;">
   {% block content %}
   <main class="feed-area">
+    <!-- Stories -->
     <a href="{% url 'view_story' uid.id %}">
     <div class="stories-row"><div class="story-pill your-story"><div class="story-av">
       <img src="{{uid.profile_pic.url}}"></a><span class="add-icon">
-        <a href="{% url 'create_story' %}" style="text-decoration: none; ">+</a></span>
-        
+        <a href="{% url 'create_story' %}" style="text-decoration:none;">+</a></span>
     </div>
     <span>Your Story</span>
   </div>
   <div class="story-pill">
   {% for f in following_story%}
-  <a href="{% url 'view_story' f.user.id %}" style="text-decoration: none;">
+  <a href="{% url 'view_story' f.user.id %}" style="text-decoration:none;">
     <div class="story-av ring">
       <img src="{{f.user.profile_pic.url}}">
     </div>
@@ -57,11 +331,12 @@
   {% endfor %}
   </div>
 </div>
+
+    <!-- Posts -->
     {% for post in post_all %}
     <article class="post-card">
       <div class="post-head">
-        <div class="post-av">
-          <img src="{{post.user.profile_pic.url}}"></div>
+        <div class="post-av"><img src="{{post.user.profile_pic.url}}"></div>
         <div class="post-info">
           <div class="post-name">{{post.user.username}}<i class="fa-solid fa-circle-check verified"></i></div>
           <div class="post-loc"><i class="fa-solid fa-location-dot"></i>{{post.location}}</div>
@@ -75,23 +350,12 @@
       <div class="post-foot">
         <div class="actions-row">
           <div class="left-actions">
-            <a href="{% url 'LikeUnlike' pk=post.id %}" class="act-btn like-btn" ><i class="fa-regular fa-heart"></i></a>
+            <a href="{% url 'LikeUnlike' pk=post.id %}" class="act-btn like-btn"><i class="fa-regular fa-heart"></i></a>
             <form action="{% url 'comment_post' pk=post.id %}" method="POST" class="comment-form">
                 {% csrf_token %}
-
                 <i class="fa-regular fa-face-smile comment-icon"></i>
-
-                <input
-                    type="text"
-                    name="comment"
-                    class="comment-input"
-                    placeholder="Add a comment..."
-                    required
-                >
-
-                <button type="submit" class="comment-btn">
-                    Post
-                </button>
+                <input type="text" name="comment" class="comment-input" placeholder="Add a comment..." required>
+                <button type="submit" class="comment-btn">Post</button>
             </form>
             <button class="act-btn"><i class="fa-regular fa-paper-plane"></i></button>
           </div>
@@ -99,11 +363,11 @@
         </div>
         <div class="likes-count" id="lk1">{{post.like_post.count}} likes</div>
         <div class="caption"><strong>{{ post.user.username }}</strong> {{ post.caption }}
-        <div class="comments-peek"  style="cursor:pointer;">View all comments</div>
+        <div class="comments-peek" style="cursor:pointer;">View all comments</div>
         <div class="time-stamp">{{post.whenpublished}}</div>
       </div>
       <div class="comment-section" id="cm1">
-        <div class="comment-list"><div class="comment-item"><img class="comment-av" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80"><div class="comment-body"><span class="comment-name">leo.winters</span><div class="comment-text">Absolutely stunning! 🌊 One of my favourite places!</div><div class="comment-time">1 hour ago</div></div></div><div class="comment-item"><img class="comment-av" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&q=80"><div class="comment-body"><span class="comment-name">nora.f</span><div class="comment-text">I need to go back!! Missing Santorini 😭</div><div class="comment-time">45 min ago</div></div></div></div>
+        <div class="comment-list"><div class="comment-item"><img class="comment-av" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80"><div class="comment-body"><span class="comment-name">leo.winters</span><div class="comment-text">Absolutely stunning! 🌊</div><div class="comment-time">1 hour ago</div></div></div><div class="comment-item"><img class="comment-av" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&q=80"><div class="comment-body"><span class="comment-name">nora.f</span><div class="comment-text">Missing Santorini 😭</div><div class="comment-time">45 min ago</div></div></div></div>
         <div class="comment-input-row">
           <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80">
           <input class="comment-input" placeholder="Add a comment…" id="ci1" onkeydown="if(event.key==='Enter') postCmt('cm1','ci1')">
@@ -114,9 +378,11 @@
     {% endfor %}
   </main>
   {% endblock %}
+
+  <!-- Right panel -->
   <aside class="right-panel">
     <div class="my-profile-card">
-      <a href="{% url 'profile' %}" style="text-decoration:none;display:flex;align-items:center;gap:inherit;">
+      <a href="{% url 'profile' %}" style="text-decoration:none;display:flex;align-items:center;gap:0.9rem;flex:1;">
         <div class="my-av-wrap"><img src="{{uid.profile_pic.url}}" class="my-av"></div>
         <div class="my-details"><div class="my-name">{{uid.username}}</div><div class="my-handle">{{uid.name}}</div></div>
       </a>
@@ -133,43 +399,20 @@
     <div class="suggest-list">
     {% for user in suggested_users %}
       <div class="suggest-item">
-        <div class="sug-av">
-          <img src="{{user.profile_pic.url}}">
-        </div>
+        <div class="sug-av"><img src="{{user.profile_pic.url}}"></div>
         <div class="sug-info"><div class="sug-name">{{user.username}}</div>
         <div class="sug-note">Suggested for you</div>
       </div>
-      <a class="follow-btn" href="{% url 'follow_unfollow' user.id %}" style="text-decoration: none;">Follow</a>
+      <a class="follow-btn" href="{% url 'follow_unfollow' user.id %}" style="text-decoration:none;">Follow</a>
     </div>
     {% endfor %}
     </div>
-    </aside>
+  </aside>
 </div>
 </div>
-<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
 <script>
-(function() {
-  var s=localStorage.getItem('velora-theme')||'dark';
-  document.documentElement.setAttribute('data-theme',s);
-  function ui(t){var ic=document.getElementById('themeIcon');if(ic)ic.className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
-  ui(s);
-  window.addEventListener('DOMContentLoaded',function(){
-    var b=document.getElementById('themeToggle');
-    if(b)b.addEventListener('click',function(){
-      var c=document.documentElement.getAttribute('data-theme');
-      var n=c==='dark'?'light':'dark';
-      document.documentElement.setAttribute('data-theme',n);
-      localStorage.setItem('velora-theme',n);ui(n);
-    });
-  });
-})();
-</script>
-<script>
-function parseLk(s){s=s.replace(' likes','').trim();if(s.toLowerCase().endsWith('k'))return parseFloat(s)*1000;if(s.toLowerCase().endsWith('m'))return parseFloat(s)*1e6;return parseInt(s.replace(/,/g,''))||0;}
-function fmtLk(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'k';return n.toLocaleString();}
 function tgSave(btn){var ic=btn.querySelector('i');if(btn.classList.contains('saved')){btn.classList.remove('saved');ic.className='fa-regular fa-bookmark';}else{btn.classList.add('saved');ic.className='fa-solid fa-bookmark';}}
-function postCmt(sid,iid){var inp=document.getElementById(iid);var txt=inp.value.trim();if(!txt)return;var list=document.getElementById(sid).querySelector('.comment-list');var nc=list.querySelector('.no-comments');if(nc)nc.remove();var d=document.createElement('div');d.className='comment-item';d.innerHTML='<img class="comment-av" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80"><div class="comment-body"><span class="comment-name">aria.velora</span><div class="comment-text">'+txt.replace(/</g,'&lt;')+'</div><div class="comment-time">Just now</div></div>';list.appendChild(d);list.scrollTop=list.scrollHeight;inp.value='';}
-
+function postCmt(sid,iid){var inp=document.getElementById(iid);var txt=inp.value.trim();if(!txt)return;var list=document.getElementById(sid).querySelector('.comment-list');var d=document.createElement('div');d.className='comment-item';d.innerHTML='<img class="comment-av" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80"><div class="comment-body"><span class="comment-name">You</span><div class="comment-text">'+txt.replace(/</g,'&lt;')+'</div><div class="comment-time">Just now</div></div>';list.appendChild(d);list.scrollTop=list.scrollHeight;inp.value='';}
 </script>
 </body>
 </html>

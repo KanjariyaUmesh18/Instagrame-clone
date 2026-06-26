@@ -1,40 +1,94 @@
 {% load static %}
 <html lang="en">
 <head>
-<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velora — Followers</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>✨ Kitnagram — Followers</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
 <style>
-.ff-page { flex:1; padding:32px 40px; max-width:760px; }
-.ff-page-title { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; color:var(--text); margin-bottom:6px; }
-.ff-page-sub { font-size:.9rem; color:var(--muted); margin-bottom:28px; }
-.ff-search-bar { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:10px 16px; color:var(--text); font-family:'Outfit',sans-serif; font-size:.95rem; outline:none; margin-bottom:24px; transition:border-color .2s; }
-.ff-search-bar:focus { border-color:var(--accent); }
-.ff-search-bar::placeholder { color:var(--muted); }
-.ff-list-page { display:flex; flex-direction:column; gap:0; }
-.ff-row { display:flex; align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid var(--border); transition:background .15s; }
-.ff-row:last-child { border-bottom:none; }
-.ff-row:hover { background:var(--bg3); border-radius:12px; padding-left:10px; padding-right:10px; margin:0 -10px; }
-.ff-big-av { width:52px; height:52px; border-radius:50%; object-fit:cover; flex-shrink:0; }
-.ff-row-info { flex:1; min-width:0; }
-.ff-row-name { font-size:.95rem; font-weight:700; color:var(--text); }
-.ff-row-note { font-size:.82rem; color:var(--muted); margin-top:2px; }
-.ff-row-mutual { font-size:.78rem; color:var(--accent); margin-top:2px; }
-.ff-action-btn {
-  background:none; border:1.5px solid var(--border); color:var(--text);
-  border-radius:8px; padding:7px 18px; font-size:.85rem; font-weight:600;
-  cursor:pointer; font-family:'Outfit',sans-serif; transition:all .2s;
-  white-space:nowrap;
+:root, [data-theme="dark"], [data-theme="light"] {
+  --bg:#f9f3e8; --bg2:rgba(255,248,238,0.95); --bg3:rgba(245,232,215,0.6);
+  --border:#e3cfbe; --text:#3d2c1e; --muted:#8b6e56; --accent:#b6845e;
+  --shadow:0 4px 20px rgba(140,90,50,0.12);
 }
-.ff-action-btn:hover { border-color:var(--accent); color:var(--accent); }
-.ff-action-btn.danger:hover { border-color:#e11d48; color:#e11d48; background:rgba(225,29,72,.06); }
-.ff-count-badge { display:inline-flex; align-items:center; justify-content:center; background:var(--accent); color:#fff; font-size:.75rem; font-weight:700; padding:2px 10px; border-radius:20px; margin-left:10px; }
-.ff-empty { text-align:center; color:var(--muted); padding:60px 0; font-size:.95rem; }
-.ff-empty i { font-size:2.5rem; display:block; margin-bottom:12px; opacity:.4; }
+body { background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important; font-family: 'Segoe UI', Roboto, system-ui, sans-serif !important; }
+.sidebar { background: rgba(255,248,238,0.92) !important; backdrop-filter: blur(12px); border-right: 1px solid #e3cfbe !important; }
+.logo { color: transparent !important; background: linear-gradient(135deg, #5b3f2b, #b6845e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.logo span { background: linear-gradient(135deg, #b6845e, #8b5e3c); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-item { border-radius: 60px !important; color: #5a4030 !important; transition: all 0.2s !important; }
+.nav-item:hover, .nav-item.active { background: rgba(182,132,94,0.15) !important; color: #8b5e3c !important; transform: translateX(4px); }
+.nav-icon i { color: #a07050 !important; }
+.nav-item:hover .nav-icon i, .nav-item.active .nav-icon i { color: #b6845e !important; }
+.sidebar-profile-mini .nav-icon img { border: 2.5px solid #b6845e; border-radius: 50%; }
+.badge { background: #b6845e !important; } .badge.red { background: #c06040 !important; }
+.sidebar-divider { border-color: #e3cfbe !important; }
+.theme-toggle { display: none !important; }
+.pages-wrapper, .page { background: transparent !important; }
+
+/* ── Followers specific ── */
+.ff-page {
+  padding: 2rem; max-width: 760px; width: 100%;
+  animation: floatIn 0.7s cubic-bezier(0.23,1,0.32,1);
+}
+@keyframes floatIn { 0% { opacity:0; transform:translateY(20px); } 100% { opacity:1; transform:translateY(0); } }
+
+.ff-page-title {
+  display: flex; align-items: center; gap: 0.7rem;
+  font-size: 1.7rem; font-weight: 600;
+  background: linear-gradient(135deg, #5b3f2b, #8b5e3c);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 0.4rem;
+}
+.ff-page-title i { color: #c27f5a; -webkit-text-fill-color: #c27f5a; }
+.ff-count-badge {
+  background: #dcc9b6; padding: 0.2rem 0.8rem;
+  border-radius: 60px; font-size: 0.85rem; font-weight: 600;
+  color: #2f241b; border: 1px solid #f3e0d0;
+  -webkit-text-fill-color: #2f241b;
+}
+
+.ff-page-sub { color: #8b6040; font-size: 0.88rem; margin-bottom: 1.6rem; }
+.ff-divider { border: none; border-top: 2px dashed #e8d5c0; margin-bottom: 1.5rem; }
+
+.ff-search-card {
+  background: rgba(255,250,240,0.75);
+  backdrop-filter: blur(10px); border-radius: 40px;
+  padding: 1rem 1.4rem; border: 1px solid rgba(255,225,200,0.5);
+  margin-bottom: 1.8rem; box-shadow: 0 8px 24px -8px rgba(140,90,50,0.1);
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.ff-search-card i { color: #a87b5e; font-size: 1.1rem; }
+.ff-search-input {
+  flex: 1; background: transparent; border: none;
+  outline: none; font-size: 0.95rem; color: #281f18; font-family: inherit;
+}
+.ff-search-input::placeholder { color: #b09080; }
+
+.ff-list-page { display: flex; flex-direction: column; gap: 0; }
+.ff-row {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(227,207,190,0.4);
+  transition: all 0.2s; border-radius: 20px;
+}
+.ff-row:last-child { border-bottom: none; }
+.ff-row:hover { background: rgba(255,250,240,0.6); transform: translateX(4px); box-shadow: 0 4px 12px rgba(140,90,50,0.06); }
+.ff-big-av { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #e3cfbe; }
+.ff-row-info { flex: 1; min-width: 0; }
+.ff-row-name { font-weight: 600; color: #3d2c1e; font-size: 0.95rem; }
+.ff-row-note { font-size: 0.82rem; color: #8b6040; margin-top: 2px; }
+
+.ff-action-btn {
+  background: rgba(235,215,195,0.5); border: 1.5px solid #e3cfbe;
+  border-radius: 60px; padding: 0.45rem 1.2rem;
+  font-size: 0.85rem; font-weight: 600; color: #5a4030;
+  text-decoration: none; transition: all 0.2s; white-space: nowrap;
+  font-family: inherit; cursor: pointer;
+}
+.ff-action-btn:hover { background: rgba(182,132,94,0.15); border-color: #b6845e; color: #b6845e; }
+.ff-action-btn.danger { border-color: rgba(180,100,80,0.3); color: #b64a30; }
+.ff-action-btn.danger:hover { background: rgba(200,80,60,0.08); border-color: #c06040; color: #c06040; }
 </style>
 </head>
 <body>
@@ -47,10 +101,10 @@
     <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
     <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
     <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
-    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
-    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
-    <a href="{% url 'followers' %}"     class="nav-item  active"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
+    <a href="{% url 'followers' %}"     class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
     <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
+    <a href="{% url 'reel_create' %}"   class="nav-item"><span class="nav-icon"><i class="fa-solid fa-video"></i></span><span class="nav-label">Create Reel</span></a>
+    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
     <a href="{% url 'profile' %}" class="sidebar-profile-mini">
       <span class="nav-icon"><img src="{{uid.profile_pic.url}}" alt="Profile"></span>
       <span class="nav-label">Profile</span>
@@ -62,50 +116,38 @@
     <a href="{% url 'login' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
   </div>
 </nav>
+
 <div class="pages-wrapper">
 <div id="followers-page" class="page page-full" style="display:block;">
   <div class="ff-page">
-    <div class="ff-page-title">Followers <span class="ff-count-badge" id="fcount">7</span></div>
-    <div class="ff-page-sub">People who follow you</div>
-    <input class="ff-search-bar" placeholder="🔍 Search followers…" oninput="filterFF(this.value,'ff-followers-list')">
+    <div class="ff-page-title"><i class="fa-solid fa-user-group"></i> Followers <span class="ff-count-badge" id="fcount">{{followers_list|length}}</span></div>
+    <div class="ff-page-sub">People who follow you ✨</div>
+    <hr class="ff-divider">
+
+    <div class="ff-search-card">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input class="ff-search-input" placeholder="Search followers…" oninput="filterFF(this.value,'ff-followers-list')">
+    </div>
+
     <div class="ff-list-page" id="ff-followers-list">
     {% for followers in followers_list %}
-    <div class="ff-row" id="ffr-zara">
-    <img class="ff-big-av" src="{{followers.following.profile_pic.url}}">
-    <div class="ff-row-info">
-      <div class="ff-row-name">{{followers.following.username}}</div>
-      <div class="ff-row-note">Followed by you back</div>
-      <div class="ff-row-mutual"><i class="fa-solid fa-user-group" style="font-size:.7rem"></i> Followed by zara.kashyap • leo.winters</div>
-    </div>
-    {% if followers.following.id in my_following %}
-    <a href="{% url 'remove_followers' pk=followers.id %}" class="ff-action-btn danger" >Remove</a>
-    {% else %}
-    <a href="{% url 'follow_unfollow' pk=followers.following.id  %}" class="ff-action-btn danger" >Follow Back</a>
-    {% endif %}
-    </div>
+      <div class="ff-row">
+        <img class="ff-big-av" src="{{followers.following.profile_pic.url}}">
+        <div class="ff-row-info">
+          <div class="ff-row-name">{{followers.following.username}}</div>
+          <div class="ff-row-note">{{followers.following.name}}</div>
+        </div>
+        {% if followers.following.id in my_following %}
+          <a href="{% url 'remove_followers' pk=followers.id %}" class="ff-action-btn danger">Remove</a>
+        {% else %}
+          <a href="{% url 'follow_unfollow' pk=followers.following.id %}" class="ff-action-btn">Follow Back</a>
+        {% endif %}
+      </div>
     {% endfor %}
     </div>
   </div>
 </div>
 </div>
-<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
-<script>
-(function() {
-  var s=localStorage.getItem('velora-theme')||'dark';
-  document.documentElement.setAttribute('data-theme',s);
-  function ui(t){var ic=document.getElementById('themeIcon');if(ic)ic.className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
-  ui(s);
-  window.addEventListener('DOMContentLoaded',function(){
-    var b=document.getElementById('themeToggle');
-    if(b)b.addEventListener('click',function(){
-      var c=document.documentElement.getAttribute('data-theme');
-      var n=c==='dark'?'light':'dark';
-      document.documentElement.setAttribute('data-theme',n);
-      localStorage.setItem('velora-theme',n);ui(n);
-    });
-  });
-})();
-</script>
 <script>
 function filterFF(q,listId){var rows=document.getElementById(listId).querySelectorAll('.ff-row');q=q.toLowerCase();rows.forEach(function(r){var name=r.querySelector('.ff-row-name');r.style.display=(name&&name.textContent.toLowerCase().includes(q))?'':'none';});}
 </script>

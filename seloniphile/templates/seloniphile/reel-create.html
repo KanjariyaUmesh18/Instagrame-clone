@@ -1,301 +1,117 @@
 {% load static %}
 <html lang="en">
 <head>
-<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velora — Create Reel</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>✨ Kitnagram — Create Reel</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
-<link rel="stylesheet" href="{% static 'css/create.css' %}">
-
 <style>
-/* Reel specific styles */
-.reel-upload-zone {
-    border: 2px dashed var(--border-color, #3a3a3a);
-    border-radius: 16px;
-    padding: 50px 20px;
-    text-align: center;
-    background: var(--bg-secondary, #1a1a1a);
-    transition: all 0.3s ease;
-    min-height: 250px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+:root, [data-theme="dark"], [data-theme="light"] {
+  --bg:#f9f3e8; --bg2:rgba(255,248,238,0.95); --bg3:rgba(245,232,215,0.6);
+  --border:#e3cfbe; --text:#3d2c1e; --muted:#8b6e56; --accent:#b6845e;
+  --shadow:0 4px 20px rgba(140,90,50,0.12);
 }
+body { background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important; font-family: 'Segoe UI', Roboto, system-ui, sans-serif !important; }
+.sidebar { background: rgba(255,248,238,0.92) !important; backdrop-filter: blur(12px); border-right: 1px solid #e3cfbe !important; }
+.logo { color: transparent !important; background: linear-gradient(135deg, #5b3f2b, #b6845e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.logo span { background: linear-gradient(135deg, #b6845e, #8b5e3c); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-item { border-radius: 60px !important; color: #5a4030 !important; transition: all 0.2s !important; }
+.nav-item:hover, .nav-item.active { background: rgba(182,132,94,0.15) !important; color: #8b5e3c !important; transform: translateX(4px); }
+.nav-icon i { color: #a07050 !important; }
+.nav-item:hover .nav-icon i, .nav-item.active .nav-icon i { color: #b6845e !important; }
+.sidebar-profile-mini .nav-icon img { border: 2.5px solid #b6845e; border-radius: 50%; }
+.badge { background: #b6845e !important; } .badge.red { background: #c06040 !important; }
+.sidebar-divider { border-color: #e3cfbe !important; }
+.theme-toggle { display: none !important; }
+.pages-wrapper, .page { background: transparent !important; }
 
-.reel-upload-zone i {
-    font-size: 48px;
-    color: var(--accent-color, #ff6b6b);
-    margin-bottom: 15px;
+/* ── Create Reel specific ── */
+.create-content {
+  padding: 2rem; max-width: 900px; width: 100%;
+  animation: floatIn 0.7s cubic-bezier(0.23,1,0.32,1);
 }
+@keyframes floatIn { 0% { opacity:0; transform:translateY(20px) scale(0.97); } 100% { opacity:1; transform:translateY(0) scale(1); } }
 
-.reel-upload-zone .upload-text {
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text-primary, #ffffff);
+.create-page-header {
+  display: flex; align-items: center; gap: 0.7rem;
+  margin-bottom: 0.4rem;
+  font-size: 1.7rem; font-weight: 600;
+  background: linear-gradient(135deg, #5b3f2b, #8b5e3c);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-
-.reel-upload-zone .upload-sub {
-    margin: 10px 0;
-    color: var(--text-secondary, #888);
-}
-
-.reel-upload-zone .upload-formats {
-    font-size: 13px;
-    color: var(--text-secondary, #888);
-    margin-top: 10px;
-}
-
-.reel-upload-zone.dragover {
-    border-color: var(--accent-color, #ff6b6b);
-    background: var(--bg-hover, #2a2a2a);
-}
-
-.video-preview-container {
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #000;
-}
-
-.video-preview-container video {
-    width: 100%;
-    display: block;
-    max-height: 500px;
-    object-fit: contain;
-}
-
-.remove-video-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-
-.remove-video-btn:hover {
-    background: rgba(255,0,0,0.8);
-    transform: scale(1.1);
-}
-
-.reel-upload-zone .video-icon {
-    font-size: 60px;
-    color: var(--accent-color, #ff6b6b);
-    margin-bottom: 15px;
-}
-
-.reel-upload-zone .duration-badge {
-    display: inline-block;
-    background: var(--accent-color, #ff6b6b);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-top: 8px;
-}
-
-/* Form Styles */
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary, #888);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-}
-
-.form-textarea {
-    width: 100%;
-    padding: 12px 16px;
-    background: var(--bg-secondary, #1a1a1a);
-    border: 1px solid var(--border-color, #3a3a3a);
-    border-radius: 12px;
-    color: var(--text-primary, #ffffff);
-    font-family: inherit;
-    font-size: 14px;
-    resize: vertical;
-    min-height: 100px;
-    transition: border-color 0.2s;
-}
-
-.form-textarea:focus {
-    outline: none;
-    border-color: var(--accent-color, #ff6b6b);
-}
-
-.form-input-icon {
-    display: flex;
-    align-items: center;
-    background: var(--bg-secondary, #1a1a1a);
-    border: 1px solid var(--border-color, #3a3a3a);
-    border-radius: 12px;
-    padding: 0 16px;
-    transition: border-color 0.2s;
-}
-
-.form-input-icon:focus-within {
-    border-color: var(--accent-color, #ff6b6b);
-}
-
-.form-input-icon i {
-    color: var(--text-secondary, #888);
-    margin-right: 12px;
-}
-
-.form-input {
-    width: 100%;
-    padding: 12px 0;
-    background: transparent;
-    border: none;
-    color: var(--text-primary, #ffffff);
-    font-size: 14px;
-}
-
-.form-input:focus {
-    outline: none;
-}
-
-.create-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.cancel-btn {
-    flex: 1;
-    padding: 12px;
-    background: var(--bg-secondary, #1a1a1a);
-    border: 1px solid var(--border-color, #3a3a3a);
-    border-radius: 12px;
-    color: var(--text-secondary, #888);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.cancel-btn:hover {
-    background: var(--bg-hover, #2a2a2a);
-}
-
-.publish-btn {
-    flex: 2;
-    padding: 12px;
-    background: var(--accent-color, #ff6b6b);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.publish-btn:hover {
-    opacity: 0.85;
-    transform: translateY(-1px);
-}
-
-.upload-btn {
-    display: inline-block;
-    padding: 10px 24px;
-    background: var(--accent-color, #ff6b6b);
-    color: white;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.upload-btn:hover {
-    opacity: 0.85;
-    transform: translateY(-1px);
-}
-
-.page-content.narrow {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.page-header {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--text-primary, #ffffff);
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.page-header i {
-    color: var(--accent-color, #ff6b6b);
-}
-
-.nav-item.active {
-    background: var(--bg-hover, #2a2a2a);
-    color: var(--accent-color, #ff6b6b);
-}
-
-.sidebar-profile-mini .nav-icon img {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+.create-page-header i { color: #c27f5a; -webkit-text-fill-color: #c27f5a; }
+.create-page-sub { color: #8b6040; font-size: 0.88rem; margin-bottom: 1.6rem; }
+.create-divider { border: none; border-top: 2px dashed #e8d5c0; margin-bottom: 1.5rem; }
 
 .create-box {
-    background: var(--bg-secondary, #1a1a1a);
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid var(--border-color, #3a3a3a);
+  background: rgba(255,250,240,0.75);
+  backdrop-filter: blur(10px); border-radius: 40px;
+  padding: 2rem 2.2rem; border: 1px solid rgba(255,225,200,0.5);
+  box-shadow: 0 20px 40px -15px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,215,175,0.3) inset;
+  display: flex; gap: 2rem;
 }
 
-.create-form {
-    margin-top: 20px;
+.create-upload-zone {
+  flex: 1; border: 2px dashed #e3cfbe; border-radius: 32px;
+  background: rgba(245,232,220,0.4);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 3rem 1rem; text-align: center; position: relative;
+  transition: all 0.2s; overflow: hidden;
 }
+.create-upload-zone:hover { background: rgba(245,232,220,0.7); border-color: #b6845e; }
+.create-upload-zone i { font-size: 3rem; color: #a07050; margin-bottom: 1rem; animation: gentlePulse 3s infinite; }
+@keyframes gentlePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.upload-text { font-size: 1.1rem; font-weight: 600; color: #3d2c1e; margin-bottom: 0.5rem; }
+.upload-sub { font-size: 0.85rem; color: #8b6040; margin-bottom: 1.2rem; }
+.upload-btn {
+  background: #b6845e; color: #fffaf5; font-size: 0.95rem; font-weight: 600;
+  padding: 0.8rem 1.6rem; border-radius: 60px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(140,90,50,0.2); transition: all 0.2s;
+  border: 1px solid #dbb08c; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.upload-btn:hover { background: #a4714b; transform: translateY(-2px); box-shadow: 0 8px 16px rgba(140,90,50,0.25); }
+.upload-formats { font-size: 0.75rem; color: #a08060; margin-top: 1rem; }
+.preview-vid { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 30px; display: none; }
+.create-upload-zone.has-file .preview-vid { display: block; animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+@keyframes popIn { 0% { opacity:0; transform:scale(0.8); } 100% { opacity:1; transform:scale(1); } }
+.create-upload-zone.has-file > i, .create-upload-zone.has-file .upload-text, .create-upload-zone.has-file .upload-sub, .create-upload-zone.has-file .upload-formats { display: none; }
+.create-upload-zone.has-file .upload-btn { position: absolute; bottom: 1rem; right: 1rem; background: rgba(255,250,240,0.9); color: #b6845e; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.15); padding: 0.6rem 1.2rem; font-size: 0.85rem; z-index: 2; }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    .create-actions {
-        flex-direction: column;
-    }
-    .page-content.narrow {
-        padding: 10px;
-    }
-    .create-box {
-        padding: 16px;
-    }
+.create-form { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.form-group { margin-bottom: 1.2rem; }
+.form-label { display: block; font-weight: 500; color: #3b2b1d; font-size: 0.9rem; margin-bottom: 0.5rem; }
+.form-textarea {
+  width: 100%; padding: 1rem 1.2rem; border: 2px solid #e3cfbe; border-radius: 20px;
+  background: rgba(255,245,235,0.7); font-size: 0.95rem; color: #281f18;
+  outline: none; transition: all 0.2s; font-family: inherit; resize: none;
+}
+.form-textarea:focus { border-color: #b8865f; background: #fffcf7; box-shadow: 0 4px 12px rgba(160,100,60,0.1); }
+
+.create-actions { display: flex; gap: 1rem; margin-top: 0.5rem; }
+.cancel-btn {
+  flex: 1; padding: 0.9rem 1.4rem; border: 1.5px solid #e3cfbe; border-radius: 60px;
+  background: rgba(235,215,195,0.5); color: #5a4030; font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; font-family: inherit; transition: all 0.2s; text-align: center; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.cancel-btn:hover { background: #dcc2ae; transform: translateY(-2px); border-color: #be9f87; }
+.publish-btn {
+  flex: 2; padding: 0.9rem 1.4rem; border: 1px solid #dbb08c; border-radius: 60px;
+  background: #b6845e; color: #fef7ef; font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+  box-shadow: 0 8px 16px -6px rgba(150,90,50,0.25); transition: all 0.2s;
+}
+.publish-btn:hover { background: #a4714b; transform: scale(1.02) translateY(-3px); box-shadow: 0 14px 26px -8px rgba(140,80,40,0.32); }
+
+@media (max-width: 800px) {
+  .create-box { flex-direction: column; gap: 1.5rem; }
+  .create-upload-zone { padding: 4rem 1rem; border-radius: 28px; }
+  .preview-vid { border-radius: 26px; }
 }
 </style>
 </head>
 <body>
-
-<!-- ══ LEFT SIDEBAR ══════════════════════════════ -->
 <nav class="sidebar">
   <div class="logo">Kit<span>nagram</span></div>
   <div class="nav-links">
@@ -307,12 +123,10 @@
     <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
     <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
     <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
-    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
     <a href="{% url 'reel_create' %}"   class="nav-item active"><span class="nav-icon"><i class="fa-solid fa-video"></i></span><span class="nav-label">Create Reel</span></a>
+    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
     <a href="{% url 'profile' %}" class="sidebar-profile-mini">
-      <span class="nav-icon">
-        <img src="{{uid.profile_pic.url}}" alt="Profile">
-      </span>
+      <span class="nav-icon"><img src="{{uid.profile_pic.url}}" alt="Profile"></span>
       <span class="nav-label">Profile</span>
     </a>
   </div>
@@ -323,90 +137,61 @@
   </div>
 </nav>
 
-<!-- ══ ALL PAGES ══════════════════════════════════ -->
 <div class="pages-wrapper">
+<div id="create-reel" class="page page-full" style="display:flex; justify-content:center; width:100%;">
+  <div class="create-content">
+    <div class="create-page-header"><i class="fa-solid fa-video"></i> Create Reel</div>
+    <div class="create-page-sub">Share a short video with the world ✨</div>
+    <hr class="create-divider">
 
-<!-- ── REEL CREATE ─────────────────────────────────── -->
-<div id="reel-create" class="page page-full" style="display:block;">
-  <div class="page-content narrow">
-    <div class="page-header"><i class="fa-solid fa-video"></i> Create Reel</div>
-    
     <form method="post" enctype="multipart/form-data" action="{% url 'reel_create' %}">
-    {% csrf_token %}
-      
+      {% csrf_token %}
       <div class="create-box">
-        <!-- Video Upload Zone -->
-        <div class="reel-upload-zone">
-          <i class="fa-solid fa-video video-icon"></i>
+        <div class="create-upload-zone" id="dz">
+          <video class="preview-vid" id="preview" loop autoplay muted></video>
+          <i class="fa-solid fa-film"></i>
           <div class="upload-text">Drag &amp; drop your video here</div>
           <div class="upload-sub">or</div>
-          <label class="upload-btn">Browse Files
-            <input type="file" style="display:none" accept="video/*" name="video" required>
+          <label class="upload-btn">
+            <i class="fa-solid fa-folder-open"></i> Browse Video
+            <input type="file" style="display:none" accept="video/*" name="video" id="fInp" required>
           </label>
-          <div class="upload-formats">MP4, MOV, AVI · Max 100MB</div>
-          <div class="duration-badge">Max 90 seconds</div>
+          <div class="upload-formats">MP4, WebM · Max 100MB</div>
         </div>
 
         <div class="create-form">
-          <!-- Caption Field -->
           <div class="form-group">
             <label class="form-label">Caption</label>
-            <textarea class="form-textarea" placeholder="Write a caption… use # for tags, @ for mentions" rows="4" name="caption"></textarea>
+            <textarea class="form-textarea" placeholder="Write a caption… use # for tags, @ for mentions" rows="6" name="caption"></textarea>
           </div>
-
-          <!-- Location Field -->
           <div class="form-group">
             <label class="form-label">Location</label>
             <div class="form-input-icon">
               <i class="fa-solid fa-location-dot"></i>
-              <input type="text" class="form-input" placeholder="Add location" name="location">
+              <input type="text" class="form-input" placeholder="Add location" name="location" style="padding-left: 2.8rem; width: 100%;">
             </div>
           </div>
-
-          <!-- Actions -->
           <div class="create-actions">
-            <!-- <button type="button" class="cancel-btn" href="{% url 'reel_create' %}">Discard</button> -->
-            <button type="submit" class="publish-btn">
-                <i class="fa-solid fa-paper-plane"></i>
-                Share Reel
-            </button>
+            <a href="{% url 'reels' %}" class="cancel-btn">Discard</a>
+            <button type="submit" class="publish-btn"><i class="fa-solid fa-paper-plane"></i> Share Reel</button>
           </div>
         </div>
       </div>
     </form>
   </div>
 </div>
-
-</div><!-- /pages-wrapper -->
-
-<button class="theme-toggle" id="themeToggle" title="Toggle theme">
-  <i class="fa-solid fa-moon" id="themeIcon"></i>
-</button>
-
-<!-- Only Theme Toggle JavaScript remains -->
+</div>
 <script>
-(function() {
-  var saved = localStorage.getItem('velora-theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  updateIcon(saved);
-  
-  function updateIcon(t) {
-    var ic = document.getElementById('themeIcon');
-    if (ic) ic.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
-  
-  window.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('themeToggle');
-    if (btn) btn.addEventListener('click', function() {
-      var cur = document.documentElement.getAttribute('data-theme');
-      var next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('velora-theme', next);
-      updateIcon(next);
-    });
+  const fi = document.getElementById('fInp');
+  const pv = document.getElementById('preview');
+  const dz = document.getElementById('dz');
+  fi.addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) {
+      const url = URL.createObjectURL(e.target.files[0]);
+      pv.src = url;
+      dz.classList.add('has-file');
+    }
   });
-})();
 </script>
-
 </body>
 </html>

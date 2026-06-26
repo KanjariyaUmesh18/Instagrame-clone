@@ -4,553 +4,225 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>📸 Instagram Story Viewer</title>
-    <!-- Font Awesome 6 (free) -->
+    <title>✨ Kitnagram — Story</title>
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         /* ----- RESET & BASE ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0a0a0a;
+            background: #000;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
             padding: 1rem;
+            overflow: hidden;
         }
 
-        /* ----- STORY CONTAINER (Instagram style) ----- */
+        /* ----- STORY CONTAINER ----- */
         .story-container {
             width: 100%;
             max-width: 420px;
             aspect-ratio: 9 / 16;
-            background: #1a1a1a;
+            background: #1a120e;
             border-radius: 28px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(227, 207, 190, 0.15);
             animation: containerPop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes containerPop {
-            0% {
-                opacity: 0;
-                transform: scale(0.92) translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            0% { opacity: 0; transform: scale(0.92) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         /* ----- STORY BACKGROUND / IMAGE ----- */
         .story-slide {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             position: relative;
             background: linear-gradient(145deg, #2a1f18, #1a1210);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
 
         .story-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
+            width: 100%; height: 100%;
+            object-fit: contain;
+            display: block; position: absolute; top: 0; left: 0;
+            background: #000;
         }
 
-        /* gradient overlay (Instagram style) */
+        /* gradient overlay */
         .story-slide::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 55%;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
             pointer-events: none;
         }
+        .story-slide::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 120px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+            pointer-events: none; z-index: 10;
+        }
 
-        /* ----- PROGRESS BAR (Instagram style) ----- */
+        /* ----- PROGRESS BAR ----- */
         .progress-bar-container {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            right: 12px;
-            display: flex;
-            gap: 4px;
-            z-index: 20;
+            position: absolute; top: 12px; left: 12px; right: 12px;
+            display: flex; gap: 4px; z-index: 20;
         }
-
         .progress-segment {
-            flex: 1;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 4px;
-            overflow: hidden;
+            flex: 1; height: 3px; background: rgba(255, 255, 255, 0.25);
+            border-radius: 4px; overflow: hidden;
         }
-
         .progress-segment .fill {
-            height: 100%;
-            width: 0%;
-            background: white;
+            height: 100%; width: 0%;
+            background: #fdf6e3;
             border-radius: 4px;
             animation: progressAnim 5s linear forwards;
         }
 
-        .progress-segment:nth-child(1) .fill {
-            animation-delay: 0s;
-            width: 100%;
-        }
-        .progress-segment:nth-child(2) .fill {
-            animation-delay: 5s;
-            width: 0%;
-        }
-        .progress-segment:nth-child(3) .fill {
-            animation-delay: 10s;
-            width: 0%;
-        }
-        .progress-segment:nth-child(4) .fill {
-            animation-delay: 15s;
-            width: 0%;
-        }
-        .progress-segment:nth-child(5) .fill {
-            animation-delay: 20s;
-            width: 0%;
-        }
+        .progress-segment:nth-child(1) .fill { animation-delay: 0s; width: 100%; }
+        .progress-segment:nth-child(2) .fill { animation-delay: 5s; width: 0%; }
+        .progress-segment:nth-child(3) .fill { animation-delay: 10s; width: 0%; }
+        .progress-segment:nth-child(4) .fill { animation-delay: 15s; width: 0%; }
+        .progress-segment:nth-child(5) .fill { animation-delay: 20s; width: 0%; }
 
         @keyframes progressAnim {
             0% { width: 0%; }
             100% { width: 100%; }
         }
 
-        /* ----- HEADER (user info) ----- */
+        /* ----- HEADER ----- */
         .story-header {
-            position: absolute;
-            top: 24px;
-            left: 16px;
-            right: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 15;
-            pointer-events: none;
+            position: absolute; top: 24px; left: 16px; right: 16px;
+            display: flex; align-items: center; gap: 12px;
+            z-index: 15; pointer-events: none;
         }
-
         .story-header .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-            padding: 2px;
-            flex-shrink: 0;
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, #5b3f2b, #b6845e);
+            padding: 2px; flex-shrink: 0;
         }
-
         .story-header .avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #1a1a1a;
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            border: 2px solid #1a120e;
         }
-
         .story-header .user-info {
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 500;
+            color: #fffaf5; font-size: 0.85rem; font-weight: 500;
             text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
+            display: flex; flex-direction: column; gap: 1px;
         }
-
-        .story-header .user-info .username {
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.2px;
-        }
-
-        .story-header .user-info .timestamp {
-            font-size: 0.65rem;
-            opacity: 0.7;
-            font-weight: 400;
-        }
-
+        .story-header .user-info .username { font-weight: 600; font-size: 0.9rem; letter-spacing: 0.2px; }
+        .story-header .user-info .timestamp { font-size: 0.65rem; opacity: 0.8; font-weight: 400; color: #dcc9b6; }
         .story-header .more-btn {
-            margin-left: auto;
-            color: white;
-            font-size: 1.2rem;
-            opacity: 0.8;
+            margin-left: auto; color: white; font-size: 1.2rem; opacity: 0.8;
             text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
-            pointer-events: auto;
-            cursor: pointer;
-            transition: 0.2s;
+            pointer-events: auto; cursor: pointer; transition: 0.2s;
         }
+        .story-header .more-btn:hover { opacity: 1; transform: scale(1.1); color: #e3cfbe; }
 
-        .story-header .more-btn:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        /* ----- CAPTION (Instagram story style) ----- */
+        /* ----- CAPTION ----- */
         .story-caption {
-            position: absolute;
-            bottom: 80px;
-            left: 20px;
-            right: 20px;
-            z-index: 15;
-            color: white;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            position: absolute; bottom: 80px; left: 20px; right: 20px;
+            z-index: 15; color: white; font-size: 0.95rem; line-height: 1.5;
             text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
+            display: flex; align-items: flex-start; gap: 10px;
             animation: captionSlide 0.6s ease;
         }
-
         @keyframes captionSlide {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
+        .story-caption i { margin-top: 2px; font-size: 0.8rem; color: #b6845e; }
+        .story-caption .caption-text { font-weight: 400; letter-spacing: 0.2px; word-break: break-word; color: #fffaf5; }
+        .story-caption .caption-text .hashtag { color: #dcc9b6; font-weight: 500; }
 
-        .story-caption i {
-            margin-top: 2px;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            color: #ffd6b0;
-        }
-
-        .story-caption .caption-text {
-            font-weight: 400;
-            letter-spacing: 0.2px;
-            word-break: break-word;
-        }
-
-        .story-caption .caption-text .hashtag {
-            color: #ffd6b0;
-            font-weight: 500;
-        }
-
-        /* ----- REPLY / SEND MESSAGE (Instagram style) ----- */
+        /* ----- REPLY ----- */
         .story-actions {
-            position: absolute;
-            bottom: 28px;
-            left: 16px;
-            right: 16px;
-            display: flex;
-            gap: 10px;
-            z-index: 15;
+            position: absolute; bottom: 24px; left: 16px; right: 16px;
+            display: flex; gap: 10px; z-index: 15;
             animation: actionSlide 0.8s ease;
         }
-
         @keyframes actionSlide {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-
         .story-actions input {
-            flex: 1;
-            padding: 10px 16px;
-            border-radius: 60px;
-            border: none;
-            background: rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            color: white;
-            font-size: 0.85rem;
-            outline: none;
-            transition: all 0.25s ease;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            flex: 1; padding: 10px 16px; border-radius: 60px; border: none;
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px);
+            color: white; font-size: 0.85rem; outline: none; transition: all 0.2s;
+            border: 1px solid rgba(227, 207, 190, 0.3); font-family: inherit;
         }
-
-        .story-actions input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 400;
-        }
-
-        .story-actions input:focus {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
+        .story-actions input::placeholder { color: rgba(255, 250, 240, 0.6); }
+        .story-actions input:focus { background: rgba(255, 250, 240, 0.25); border-color: rgba(227, 207, 190, 0.5); }
         .story-actions .action-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            color: white;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; transition: 0.2s;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
+        .story-actions .action-btn:hover { transform: scale(1.1) rotate(10deg); color: #b6845e; }
+        .story-actions .like-btn:hover { color: #e11d48; }
 
-        .story-actions .action-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.05);
+        /* ----- NAVIGATION ----- */
+        .nav-tap { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 25; cursor: pointer; }
+        .nav-tap.left { left: 0; }
+        .nav-tap.right { right: 0; width: 70%; }
+
+        /* ----- CLOSE BTN ----- */
+        .close-story {
+            position: fixed; top: 20px; right: 24px;
+            color: rgba(255,255,255,0.8); font-size: 1.8rem;
+            cursor: pointer; z-index: 50; transition: 0.2s;
+            text-decoration: none;
         }
-
-        .story-actions .action-btn:active {
-            transform: scale(0.92);
-        }
-
-        .story-actions .action-btn.like-btn {
-            background: rgba(220, 50, 70, 0.3);
-            border-color: rgba(220, 50, 70, 0.2);
-        }
-
-        .story-actions .action-btn.like-btn:hover {
-            background: rgba(220, 50, 70, 0.5);
-        }
-
-        /* ----- NAVIGATION ARROWS (Instagram style) ----- */
-        .nav-area {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 30%;
-            z-index: 12;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .story-container:hover .nav-area {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .nav-left {
-            left: 0;
-            padding-left: 8px;
-        }
-
-        .nav-right {
-            right: 0;
-            padding-right: 8px;
-        }
-
-        .nav-area .nav-icon {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1rem;
-            opacity: 0;
-            transition: all 0.25s ease;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .nav-area:hover .nav-icon {
-            opacity: 1;
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .nav-area .nav-icon i {
-            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
-        }
-
-        /* ----- STORY INDICATOR DOTS (bottom) ----- */
-        .story-indicators {
-            position: absolute;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 6px;
-            z-index: 18;
-        }
-
-        .story-indicators .dot-indicator {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transition: 0.3s;
-        }
-
-        .story-indicators .dot-indicator.active {
-            background: white;
-            width: 18px;
-            border-radius: 6px;
-        }
-
-        /* ----- RESPONSIVE ----- */
-        @media (max-width: 480px) {
-            .story-container {
-                border-radius: 16px;
-                max-width: 100%;
-                aspect-ratio: 9 / 16;
-            }
-
-            .story-header .user-info .username {
-                font-size: 0.8rem;
-            }
-
-            .story-caption {
-                font-size: 0.85rem;
-                bottom: 72px;
-                left: 16px;
-                right: 16px;
-            }
-
-            .story-actions {
-                bottom: 20px;
-                left: 12px;
-                right: 12px;
-            }
-
-            .story-actions input {
-                font-size: 0.8rem;
-                padding: 8px 14px;
-            }
-
-            .story-actions .action-btn {
-                width: 38px;
-                height: 38px;
-                font-size: 0.95rem;
-            }
-
-            .nav-area .nav-icon {
-                width: 28px;
-                height: 28px;
-                font-size: 0.8rem;
-            }
-        }
-
-        /* ----- TOUCH DEVICE: always show arrows lightly ----- */
-        @media (hover: none) {
-            .nav-area {
-                opacity: 1;
-                pointer-events: auto;
-            }
-            .nav-area .nav-icon {
-                opacity: 0.6;
-                background: rgba(0, 0, 0, 0.2);
-            }
-            .nav-area:hover .nav-icon {
-                opacity: 0.8;
-            }
-        }
+        .close-story:hover { transform: scale(1.1); color: #fff; }
     </style>
 </head>
 <body>
 
+    <a href="{% url 'home' %}" class="close-story"><i class="fa-solid fa-xmark"></i></a>
+
     <div class="story-container">
-
-        <!-- PROGRESS BAR (5 segments like Instagram) -->
+        
         {% for s in v_story %} 
-            <div class="progress-bar-container">
-                <div class="progress-segment"><div class="fill"></div></div>
-                
-            </div>
+        <div class="progress-bar-container">
+            <div class="progress-segment"><div class="fill"></div></div>
+            <div class="progress-segment"><div class="fill"></div></div>
+        </div>
 
-            <!-- STORY SLIDE (image + overlay) -->
-            <div class="story-slide">
-                <!-- Instagram-style story image (beautiful nature) -->
-                <img 
-                    src="{{s.story_image.url}}" 
-                    alt="Story background"
-                    loading="lazy"
-                />
+        <div class="story-header">
+            <div class="avatar">
+                <img src="{{s.user.profile_pic.url}}" alt="User" />
             </div>
-
-            <!-- HEADER: Avatar + Username + More -->
-            <div class="story-header">
-                <div class="avatar">
-                    <img src="{{s.user.profile_pic.url}}" alt="User avatar" />
-                </div>
-                <div class="user-info">
-                    <span class="username">{{s.user.username}}</span>
-                    <span class="timestamp">{{s.whenpublished}}</span>
-                </div>
-                <div class="more-btn">
-                    <i class="fas fa-ellipsis-h"></i>
-                </div>
+            <div class="user-info">
+                <span class="username">{{s.user.username}}</span>
+                <span class="timestamp">{{s.whenpublished}}</span>
             </div>
+            <i class="fa-solid fa-ellipsis more-btn"></i>
+        </div>
 
-            <!-- CAPTION (Instagram story style) -->
-            <div class="story-caption">
-                <i class="fas fa-quote-left"></i>
-                <span class="caption-text">
-                    {{s.story_caption}} 
-                </span>
-            </div>
+        <div class="story-slide">
+            <img src="{{s.story_image.url}}" alt="Story content" />
+        </div>
 
+        {% if s.story_caption %}
+        <div class="story-caption">
+            <i class="fa-solid fa-quote-left"></i>
+            <span class="caption-text">{{s.story_caption}}</span>
+        </div>
+        {% endif %}
         {% endfor %}
 
-        <!-- ACTION BAR: Send message + Like + Share (Instagram style) -->
         <div class="story-actions">
             <input type="text" placeholder="Send message..." />
-            <button class="action-btn like-btn">
-                <i class="far fa-heart"></i>
-            </button>
-            <button class="action-btn">
-                <i class="far fa-paper-plane"></i>
-            </button>
+            <button class="action-btn like-btn"><i class="fa-regular fa-heart"></i></button>
+            <button class="action-btn"><i class="fa-regular fa-paper-plane"></i></button>
         </div>
 
-        <!-- NAVIGATION ARROWS (Instagram style - appear on hover) -->
-        <div class="nav-area nav-left">
-            <div class="nav-icon">
-                <i class="fas fa-chevron-left"></i>
-            </div>
-        </div>
-        <div class="nav-area nav-right">
-            <div class="nav-icon">
-                <i class="fas fa-chevron-right"></i>
-            </div>
-        </div>
-
-        <!-- BOTTOM INDICATOR DOTS -->
-        <div class="story-indicators">
-            <span class="dot-indicator active"></span>
-            <span class="dot-indicator"></span>
-            <span class="dot-indicator"></span>
-            <span class="dot-indicator"></span>
-            <span class="dot-indicator"></span>
-        </div>
-
+        <div class="nav-tap left"></div>
+        <div class="nav-tap right"></div>
     </div>
 
 </body>

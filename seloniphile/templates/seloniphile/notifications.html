@@ -1,18 +1,108 @@
 {% load static %}
 <html lang="en">
 <head>
-<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Velora — Notifications</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>✨ Kitnagram — Notifications</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
-<link rel="stylesheet" href="{% static 'css/notification.css' %}">
+<style>
+:root, [data-theme="dark"], [data-theme="light"] {
+  --bg:#f9f3e8; --bg2:rgba(255,248,238,0.95); --bg3:rgba(245,232,215,0.6);
+  --border:#e3cfbe; --text:#3d2c1e; --muted:#8b6e56; --accent:#b6845e;
+  --shadow:0 4px 20px rgba(140,90,50,0.12);
+}
+body { background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%) !important; font-family: 'Segoe UI', Roboto, system-ui, sans-serif !important; }
+.sidebar { background: rgba(255,248,238,0.92) !important; backdrop-filter: blur(12px); border-right: 1px solid #e3cfbe !important; }
+.logo { color: transparent !important; background: linear-gradient(135deg, #5b3f2b, #b6845e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.logo span { background: linear-gradient(135deg, #b6845e, #8b5e3c); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-item { border-radius: 60px !important; color: #5a4030 !important; transition: all 0.2s !important; }
+.nav-item:hover, .nav-item.active { background: rgba(182,132,94,0.15) !important; color: #8b5e3c !important; transform: translateX(4px); }
+.nav-icon i { color: #a07050 !important; }
+.nav-item:hover .nav-icon i, .nav-item.active .nav-icon i { color: #b6845e !important; }
+.sidebar-profile-mini .nav-icon img { border: 2.5px solid #b6845e; border-radius: 50%; }
+.badge { background: #b6845e !important; } .badge.red { background: #c06040 !important; }
+.sidebar-divider { border-color: #e3cfbe !important; }
+.theme-toggle { display: none !important; }
+.pages-wrapper, .page { background: transparent !important; }
+
+/* ── Notifications specific ── */
+.notif-content {
+  padding: 2rem;
+  max-width: 700px;
+  width: 100%;
+  animation: floatIn 0.7s cubic-bezier(0.23,1,0.32,1);
+}
+@keyframes floatIn { 0% { opacity:0; transform:translateY(20px); } 100% { opacity:1; transform:translateY(0); } }
+
+.notif-page-header {
+  display: flex; align-items: center; gap: 0.7rem;
+  margin-bottom: 0.4rem;
+  font-size: 1.7rem; font-weight: 600;
+  background: linear-gradient(135deg, #5b3f2b, #8b5e3c);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.notif-page-header i {
+  color: #c27f5a; -webkit-text-fill-color: #c27f5a;
+  animation: gentlePulse 2.8s infinite ease-in-out;
+}
+@keyframes gentlePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.notif-page-sub { color: #8b6040; font-size: 0.88rem; margin-bottom: 1.6rem; }
+.notif-divider { border: none; border-top: 2px dashed #e8d5c0; margin-bottom: 1.5rem; }
+
+.notif-group-title {
+  font-size: 0.8rem; font-weight: 700; color: #8b6040;
+  text-transform: uppercase; letter-spacing: 0.7px;
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.notif-group-title::after { content: ''; flex: 1; border-top: 1px dashed #e3cfbe; }
+
+.notif-list { display: flex; flex-direction: column; gap: 0; }
+.notif-item {
+  display: flex; align-items: center; gap: 0.9rem;
+  padding: 1rem 1.2rem;
+  border-radius: 20px;
+  background: rgba(255,250,240,0.6);
+  border: 1px solid rgba(255,225,200,0.3);
+  margin-bottom: 0.6rem;
+  transition: all 0.2s;
+  animation: floatIn 0.5s ease;
+}
+.notif-item:hover { background: rgba(255,250,240,0.9); transform: translateX(4px); box-shadow: 0 4px 16px rgba(140,90,50,0.1); }
+.notif-item.unread {
+  background: rgba(255,250,240,0.85);
+  border-color: rgba(182,132,94,0.2);
+  box-shadow: 0 2px 10px rgba(140,90,50,0.08);
+}
+.notif-av { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 2px solid #e3cfbe; }
+.notif-av img { width: 100%; height: 100%; object-fit: cover; }
+.notif-body { flex: 1; min-width: 0; }
+.notif-name { font-weight: 700; color: #3d2c1e; font-size: 0.92rem; }
+.notif-body { font-size: 0.88rem; color: #5a4030; line-height: 1.4; }
+.notif-time { font-size: 0.76rem; color: #b09080; margin-top: 3px; }
+.notif-thumb { width: 48px; height: 48px; border-radius: 12px; overflow: hidden; flex-shrink: 0; border: 1.5px solid #e3cfbe; }
+.notif-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.ff-action-btn {
+  background: rgba(235,215,195,0.5); border: 1.5px solid #e3cfbe;
+  border-radius: 60px; padding: 0.4rem 1rem;
+  font-size: 0.82rem; font-weight: 600; color: #5a4030;
+  text-decoration: none; transition: all 0.2s; white-space: nowrap;
+  font-family: inherit;
+}
+.ff-action-btn:hover { background: rgba(182,132,94,0.15); border-color: #b6845e; color: #b6845e; }
+.ff-action-btn.danger { border-color: rgba(180,100,80,0.3); color: #b64a30; }
+.ff-action-btn.danger:hover { background: rgba(200,80,60,0.08); border-color: #c06040; color: #c06040; }
+
+/* no notifications */
+.notif-empty {
+  text-align: center; padding: 4rem 1rem; color: #a07050;
+}
+.notif-empty i { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.3; }
+</style>
 </head>
 <body>
-
-<!-- ══ LEFT SIDEBAR ══════════════════════════════ -->
 <nav class="sidebar">
   <div class="logo">Kit<span>nagram</span></div>
   <div class="nav-links">
@@ -21,9 +111,9 @@
     <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
     <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
     <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
-    <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
+    <a href="{% url 'notifications' %}" class="nav-item active has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
     <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
-    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
+    <a href="{% url 'reel_create' %}"   class="nav-item"><span class="nav-icon"><i class="fa-solid fa-video"></i></span><span class="nav-label">Create Reel</span></a>
     <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
     <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
     <a href="{% url 'profile' %}" class="sidebar-profile-mini">
@@ -37,29 +127,25 @@
     <a href="{% url 'login' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
   </div>
 </nav>
-
-<!-- ══ PAGES WRAPPER ══════════════════════════════════ -->
 <div class="pages-wrapper">
-
 <div id="notifications" class="page page-full" style="display:block;">
-  <div class="page-content">
-    <div class="page-header"><i class="fa-solid fa-bell"></i> Notifications</div>
-    <div class="notif-group-title">Today</div>
+  <div class="notif-content">
+    <div class="notif-page-header"><i class="fa-solid fa-bell"></i> Notifications</div>
+    <div class="notif-page-sub">Stay updated with your latest activity ✨</div>
+    <hr class="notif-divider">
 
+    <div class="notif-group-title">Today</div>
     <div class="notif-list">
       {% if all_notification %}
         {% for notification in all_notification %}
 
           {% if notification.notification_type == "follow" %}
-          <!-- ── FOLLOW NOTIFICATION ── -->
           <div class="notif-item unread">
-            <div class="notif-av">
-              <img src="{{notification.sender.profile_pic.url}}">
-            </div>
+            <div class="notif-av"><img src="{{notification.sender.profile_pic.url}}"></div>
             <div class="notif-body">
               <span class="notif-name">{{notification.sender.username}}</span>
               {{notification.message}}
-              <span class="notif-time">{{notification.whenpublished}}</span>
+              <div class="notif-time">{{notification.whenpublished}}</div>
             </div>
             {% if notification.sender.id not in my_following %}
             <a href="{% url 'follow_unfollow' pk=notification.sender.id %}" class="ff-action-btn danger">Follow Back</a>
@@ -68,72 +154,39 @@
           {% endif %}
 
           {% if notification.notification_type == "like" %}
-          <!-- ── LIKE NOTIFICATION ── -->
           <div class="notif-item unread">
-            <div class="notif-av">
-              <img src="{{notification.sender.profile_pic.url}}">
-            </div>
+            <div class="notif-av"><img src="{{notification.sender.profile_pic.url}}"></div>
             <div class="notif-body">
               <span class="notif-name">{{notification.sender.username}}</span>
               {{notification.message}}
-              <span class="notif-time">{{notification.whenpublished}}</span>
+              <div class="notif-time">{{notification.whenpublished}}</div>
             </div>
-            <div class="notif-thumb">
-              <img src="{{notification.post_fk.image.url}}">
-            </div>
+            <div class="notif-thumb"><img src="{{notification.post_fk.image.url}}"></div>
           </div>
           {% endif %}
 
           {% if notification.notification_type == "comment" %}
-          <!-- ── COMMENT NOTIFICATION ── -->
           <div class="notif-item unread">
-            <div class="notif-av">
-              <img src="{{notification.sender.profile_pic.url}}">
-            </div>
+            <div class="notif-av"><img src="{{notification.sender.profile_pic.url}}"></div>
             <div class="notif-body">
               <span class="notif-name">{{notification.sender.username}}</span>
               {{notification.message}}
-              <span class="notif-time">{{notification.whenpublished}}</span>
+              <div class="notif-time">{{notification.whenpublished}}</div>
             </div>
-            <div class="notif-thumb">
-              <img src="{{notification.post_fk.image.url}}">
-            </div>
+            <div class="notif-thumb"><img src="{{notification.post_fk.image.url}}"></div>
           </div>
           {% endif %}
 
         {% endfor %}
       {% else %}
-        <h3>No new notifications</h3>
+        <div class="notif-empty">
+          <i class="fa-solid fa-bell-slash"></i>
+          <p>No new notifications yet</p>
+        </div>
       {% endif %}
-    </div><!-- /notif-list -->
-
-  </div><!-- /page-content -->
-</div><!-- /notifications -->
-
-</div><!-- /pages-wrapper -->
-
-<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
-
-<script>
-(function() {
-  var saved = localStorage.getItem('velora-theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  updateIcon(saved);
-  function updateIcon(t) {
-    var ic = document.getElementById('themeIcon');
-    if (ic) ic.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
-  window.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('themeToggle');
-    if (btn) btn.addEventListener('click', function() {
-      var cur = document.documentElement.getAttribute('data-theme');
-      var next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('velora-theme', next);
-      updateIcon(next);
-    });
-  });
-})();
-</script>
+    </div>
+  </div>
+</div>
+</div>
 </body>
 </html>

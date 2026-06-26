@@ -1,76 +1,308 @@
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>✨ Kitnagram · Create Account</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Velora — Create Account</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    body {
+      background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      padding: 1.5rem;
+    }
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(200,150,100,0.12), transparent 70%);
+      top: -100px; right: -100px;
+    }
+    body::after {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(180,130,80,0.1), transparent 70%);
+      bottom: -80px; left: -80px;
+    }
+
+    .auth-card {
+      position: relative; z-index: 1;
+      max-width: 540px; width: 100%;
+      background: rgba(255, 250, 240, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 48px 48px 40px 40px;
+      padding: 2.8rem 2.8rem 3rem;
+      box-shadow: 0 30px 50px -20px rgba(0,0,0,0.22),
+                  0 0 0 1px rgba(255, 215, 175, 0.3) inset,
+                  0 0 0 2px rgba(255, 245, 235, 0.7) inset;
+      border: 1px solid rgba(255, 225, 200, 0.5);
+      animation: floatIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    @keyframes floatIn {
+      0%   { opacity: 0; transform: translateY(40px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .auth-logo {
+      text-align: center;
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #5b3f2b, #b6845e, #8b5e3c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gentlePulse 3s infinite ease-in-out;
+    }
+    @keyframes gentlePulse {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.12); }
+    }
+
+    .auth-subtitle {
+      text-align: center;
+      font-size: 0.88rem;
+      color: #7a5e47;
+      margin: 0.3rem 0 2rem;
+      letter-spacing: 0.3px;
+    }
+    .auth-header-line {
+      border: none;
+      border-top: 2px dashed #e8d5c0;
+      margin-bottom: 2rem;
+    }
+
+    /* row of 2 fields */
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .field { margin-bottom: 1.3rem; position: relative; }
+    .field label {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-weight: 500; color: #3b2b1d;
+      font-size: 0.95rem; margin-bottom: 0.5rem;
+    }
+    .field label i { color: #ac7b5a; font-size: 1rem; width: 1.4rem; }
+
+    .input-wrap { position: relative; }
+
+    .inp-icon {
+      position: absolute; left: 1.2rem; top: 50%;
+      transform: translateY(-50%);
+      color: #a87b5e; font-size: 1.1rem;
+      pointer-events: none;
+    }
+    .prefix-icon {
+      position: absolute; left: 1.2rem; top: 50%;
+      transform: translateY(-50%);
+      color: #a87b5e; font-size: 1rem;
+      font-weight: 600; pointer-events: none;
+    }
+
+    .input {
+      width: 100%;
+      padding: 1rem 1.4rem 1rem 3.2rem;
+      border: 2px solid #e3cfbe;
+      border-radius: 60px;
+      background: rgba(255, 245, 235, 0.7);
+      backdrop-filter: blur(4px);
+      font-size: 0.95rem;
+      color: #281f18;
+      outline: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(180, 130, 90, 0.05);
+      font-family: inherit;
+    }
+    .input.prefix-pad { padding-left: 2.2rem; }
+    .input:focus {
+      border-color: #b8865f;
+      background: #fffcf7;
+      box-shadow: 0 8px 18px rgba(160,100,60,0.15), 0 0 0 4px rgba(200,150,110,0.15);
+      transform: scale(1.01);
+    }
+    .input::placeholder { color: #b09080; }
+
+    select.input { padding-left: 3.2rem; appearance: none; cursor: pointer; }
+
+    .eye {
+      position: absolute; right: 1.2rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: #a87b5e;
+      cursor: pointer; font-size: 1rem; padding: 0;
+    }
+    .eye:hover { color: #7a5038; }
+
+    .ok-icon {
+      position: absolute; right: 1.2rem; top: 50%;
+      transform: translateY(-50%);
+      color: #8ab87a; font-size: 1rem;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 1rem 1.6rem;
+      border: 1px solid #dbb08c;
+      border-radius: 60px;
+      background: #b6845e;
+      color: #fef7ef;
+      font-weight: 600;
+      font-size: 1rem;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.7rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 16px -6px rgba(150, 90, 50, 0.25);
+      margin-top: 0.5rem;
+      letter-spacing: 0.3px;
+    }
+    .btn-submit:hover {
+      background: #a4714b;
+      transform: scale(1.02) translateY(-3px);
+      box-shadow: 0 16px 28px -8px rgba(140, 80, 40, 0.35);
+    }
+    .btn-submit:hover i { animation: iconShake 0.5s ease; }
+    @keyframes iconShake {
+      0%   { transform: rotate(0); }
+      25%  { transform: rotate(6deg); }
+      75%  { transform: rotate(-6deg); }
+      100% { transform: rotate(0); }
+    }
+
+    /* divider */
+    .divider {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1.6rem 0;
+      color: #b09080; font-size: 0.85rem;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1;
+      border-top: 1px dashed #e3cfbe;
+    }
+
+    /* google btn */
+    .social-btn {
+      width: 100%;
+      padding: 0.85rem 1.4rem;
+      border: 2px solid #e3cfbe;
+      border-radius: 60px;
+      background: rgba(255, 245, 235, 0.6);
+      color: #3b2b1d;
+      font-weight: 500;
+      font-size: 0.95rem;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.7rem;
+      transition: all 0.2s ease;
+    }
+    .social-btn:hover {
+      border-color: #b8865f;
+      background: rgba(255, 245, 235, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(160,100,60,0.1);
+    }
+
+    .auth-switch {
+      text-align: center; margin-top: 1.6rem;
+      font-size: 0.9rem; color: #7a5e47;
+    }
+    .auth-switch a {
+      color: #b6845e; text-decoration: none;
+      font-weight: 600; transition: color 0.2s;
+    }
+    .auth-switch a:hover { color: #8b5e3c; text-decoration: underline; }
+
+    .auth-footer {
+      margin-top: 1.8rem;
+      display: flex; justify-content: center; gap: 0.4rem;
+    }
+    .dot {
+      width: 8px; height: 8px; background: #c8ad95;
+      border-radius: 60px; display: inline-block;
+      animation: dotWave 1.8s infinite alternate ease-in-out;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; background: #b58b6f; }
+    .dot:nth-child(3) { animation-delay: 0.4s; background: #a07658; }
+    .dot:nth-child(4) { animation-delay: 0.6s; background: #936a4d; }
+    .dot:nth-child(5) { animation-delay: 0.8s; background: #815f44; }
+    @keyframes dotWave {
+      0%   { transform: translateY(0px) scale(0.8); opacity: 0.3; }
+      100% { transform: translateY(-6px) scale(1.2); opacity: 1; }
+    }
+
+    @media (max-width: 560px) {
+      .auth-card { padding: 2rem 1.4rem 2.2rem; border-radius: 32px; }
+      .row-2 { grid-template-columns: 1fr; }
+      .auth-logo { font-size: 2rem; }
+    }
+  </style>
 </head>
 <body>
+  <div class="auth-card">
+    <div class="auth-logo">Kitnagram</div>
+    <div class="auth-subtitle"><i class="fas fa-star" style="color:#c27f5a;margin-right:5px;"></i> It's free and always will be ✨</div>
+    <hr class="auth-header-line">
 
-  <div class="page">
-    <!-- Logo -->
-    <!-- Card -->
-    <div class="card">
+    <form action="{% url 'register' %}" method="post">
+      {% csrf_token %}
 
-      <div class="card-head">
-        <div class="logo">Kit<span>nagram</span></div>
-        <p class="card-sub">It's free and always will be ✨</p>
+      <!-- Username -->
+      <div class="field">
+        <label><i class="fas fa-at"></i> Username</label>
+        <div class="input-wrap">
+          <span class="prefix-icon">@</span>
+          <input type="text" class="input prefix-pad" placeholder="Enter your username" autocomplete="username" name="username">
+          <span class="ok-icon"><i class="fa-solid fa-circle-check"></i></span>
+        </div>
       </div>
 
-      
-      <form class="form" action="{% url 'register' %}" method="post">
-      {% csrf_token %}
-          <div class="field">
-          <label class="label">Username</label>
-          <div class="input-wrap">
-            <span class="prefix-icon">@</span>
-            <input type="text" class="input prefix-pad" placeholder="Enter Your UserName" autocomplete="username"
-              name="username">
-            <span class="ok-icon"><i class="fa-solid fa-circle-check"></i></span>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label">Email Address</label>
-          <div class="input-wrap">
-            <i class="fa-solid fa-envelope inp-icon"></i>
-            <input type="email" class="input" placeholder="Enter Your Email" autocomplete="email" name="email">
-          </div>
-        </div>
-
-        <div class="row-2">
-          <div class="field">
-            <label class="label">Password</label>
-            <div class="input-wrap">
-              <i class="fa-solid fa-lock inp-icon"></i>
-              <input type="password" class="input" placeholder="Enter Your Password" id="pw1" autocomplete="new-password"
-                name="password">
-              <button type="button" class="eye" onclick="toggle('pw1',this)"><i class="fa-regular fa-eye"></i></button>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="label">Confirm Password</label>
-            <div class="input-wrap">
-              <i class="fa-solid fa-lock inp-icon"></i>
-              <input type="password" class="input" placeholder="Confirm Your Password" id="pw2" name="confirm_password">
-              <button type="button" class="eye" onclick="toggle('pw2',this)"><i class="fa-regular fa-eye"></i></button>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-        <label class="label">Gender</label>
+      <!-- Email -->
+      <div class="field">
+        <label><i class="fas fa-envelope"></i> Email Address</label>
         <div class="input-wrap">
-          <i class="fa-solid fa-user-tag inp-icon"></i>
+          <i class="fas fa-envelope inp-icon"></i>
+          <input type="email" class="input" placeholder="Enter your email" autocomplete="email" name="email">
+        </div>
+      </div>
+
+      <!-- Password row -->
+      <div class="row-2">
+        <div class="field">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock inp-icon"></i>
+            <input type="password" class="input" placeholder="Password" id="pw1" autocomplete="new-password" name="password">
+            <button type="button" class="eye" onclick="toggle('pw1',this)"><i class="fa-regular fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="field">
+          <label><i class="fas fa-lock"></i> Confirm</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock inp-icon"></i>
+            <input type="password" class="input" placeholder="Confirm" id="pw2" name="confirm_password">
+            <button type="button" class="eye" onclick="toggle('pw2',this)"><i class="fa-regular fa-eye"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gender -->
+      <div class="field">
+        <label><i class="fas fa-user-tag"></i> Gender</label>
+        <div class="input-wrap">
+          <i class="fas fa-user-tag inp-icon"></i>
           <select name="gender" class="input">
             <option value="" disabled selected>Select Gender</option>
             <option value="Male">Male</option>
@@ -80,60 +312,40 @@
         </div>
       </div>
 
-        <button type="submit" class="btn">
-          <i class="fa-solid fa-user-plus"></i> Create Account
-        </button>
+      <button type="submit" class="btn-submit">
+        <i class="fas fa-user-plus"></i> Create Account
+      </button>
+    </form>
 
-      </form>
+    <div class="divider"><span>or</span></div>
 
-      <div class="divider"><span>or</span></div>
-
-      <div class="social">
-        <button class="social-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" style="flex-shrink:0">
-            <path fill="#4285F4"
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-            <path fill="#34A853"
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-            <path fill="#FBBC05"
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-            <path fill="#EA4335"
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-          </svg>
-          Sign up with Google
-        </button>
-      </div>
-
-      <p class="switch">Already have an account? <a href="{% url 'login' %}" style="text-decoration: none;">Log in →</a>
-      </p>
-
+    <div class="social">
+      <button class="social-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" style="flex-shrink:0">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+        </svg>
+        Sign up with Google
+      </button>
     </div>
 
+    <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Log in →</a></p>
+
+    <div class="auth-footer">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="dot"></span><span class="dot"></span>
+    </div>
   </div>
 
-<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
-
-<script>
-(function() {
-  var saved = localStorage.getItem('velora-theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  updateIcon(saved);
-  function updateIcon(t) {
-    var ic = document.getElementById('themeIcon');
-    if (ic) ic.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-  }
-  window.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('themeToggle');
-    if (btn) btn.addEventListener('click', function() {
-      var cur = document.documentElement.getAttribute('data-theme');
-      var next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('velora-theme', next);
-      updateIcon(next);
-    });
-  });
-})();
-</script>
+  <script>
+    function toggle(id, btn) {
+      const inp = document.getElementById(id);
+      const ic = btn.querySelector('i');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      ic.className = inp.type === 'password' ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
+    }
+  </script>
 </body>
-
 </html>
