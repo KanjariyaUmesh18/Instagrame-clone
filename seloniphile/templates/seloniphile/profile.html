@@ -1,0 +1,170 @@
+{% load static %}
+<html lang="en">
+<head>
+<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velora — Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+</head>
+<body>
+
+<!-- ══ LEFT SIDEBAR ══════════════════════════════ -->
+<nav class="sidebar">
+  <div class="logo">Kit<span>nagram</span></div>
+  <div class="nav-links">
+    <a href="{% url 'home' %}"          class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+    <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+    <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
+    <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
+    <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
+    <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
+    <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
+    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
+    <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
+    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+    <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+      <span class="nav-icon">
+        
+        <img src="{{uid.profile_pic.url}}" alt="Profile">
+              </span>
+      <span class="nav-label">Profile</span>
+    </a>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="nav-bottom">
+    <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+    <a href="{% url 'login' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+  </div>
+</nav>
+
+<!-- ══ ALL PAGES ══════════════════════════════════ -->
+<div class="pages-wrapper">
+
+<!-- ── PROFILE ─────────────────────────────────── -->
+<div id="profile" class="page page-full" style="display:block;">
+  <form method="post" >
+    
+    <div class="profile-scroll">
+
+      <!-- HERO BANNER -->
+    <div class="profile-hero">
+      <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&q=85" class="profile-hero-img" alt="cover">
+      <div class="profile-hero-gradient"></div>
+    </div>
+
+    <!-- PROFILE BODY -->
+    <div class="profile-body">
+
+      <!-- LEFT: Avatar + Info -->
+      <div class="profile-left">
+        <div class="profile-av-wrap">
+          <img src="{{uid.profile_pic.url}}" class="profile-av">
+          <div class="profile-av-online"></div>
+        </div>
+        <div class="profile-identity">
+          <div class="profile-name">{{uid.username}}</div>
+          <div class="profile-handle">{{uid.name}}</div>
+        </div>
+        <div class="profile-bio-text">
+          {{uid.bio}}
+        </div>
+        <div class="profile-meta-row">
+          <span><i class="fa-solid fa-location-dot"></i> {{uid.email}}</span>
+          <a href="#" class="profile-link"><i class="fa-solid fa-link"></i>{{uid.link}}</a>
+        </div>
+        <!-- Action buttons -->
+        <div class="profile-action-btns">
+          <a href="{% url 'edit_profile' %}" class="edit-profile-btn"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+          <button class="share-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i> Share</button>
+        </div>
+      </div>
+      
+      <!-- RIGHT: Stats -->
+      <div class="profile-right">
+        <div class="profile-stats-grid">
+          <div class="pstat-card">
+            <div class="pstat-num">{{post_count}}</div>
+            <div class="pstat-lbl">Posts</div>
+          </div>
+          <div class="pstat-card">
+            <div class="pstat-num">{{followers}}</div>
+            <div class="pstat-lbl">Followers</div>
+          </div>
+          <div class="pstat-card">
+            <div class="pstat-num">{{following}}</div>
+            <div class="pstat-lbl">Following</div>
+          </div>
+          <div class="pstat-card">
+            <div class="pstat-num">{{total_likes}}</div>
+            <div class="pstat-lbl">Likes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- TABS + GRID -->
+    <div class="profile-tabs-wrap">
+      <div class="profile-tabs">
+        <span class="ptab active"><i class="fa-solid fa-border-all"></i> Posts</span>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      {% for post in posts %}
+        <div class="profile-grid-item">
+          <img src="{{post.image.url}}">
+            <div class="pgrid-overlay">
+              <i class="fa-solid fa-heart"></i>0 &nbsp;
+              <i class="fa-solid fa-comment"></i>0
+            </div>
+        </div>
+      {% endfor %}
+
+      {% for r in reels %}
+        <div class="profile-grid-item">
+          <video src="{{r.video.url}}"></video>
+            <div class="pgrid-overlay">
+              <i class="fa-solid fa-heart"></i>0 &nbsp;
+              <i class="fa-solid fa-comment"></i>0
+            </div>
+        </div>
+      {% endfor %}
+      
+    </div>
+  </form>
+</div>
+
+</div><!-- /pages-wrapper -->
+
+<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+
+<script>
+(function() {
+  var saved = localStorage.getItem('velora-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  updateIcon(saved);
+  function updateIcon(t) {
+    var ic = document.getElementById('themeIcon');
+    if (ic) ic.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  }
+  window.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('themeToggle');
+    if (btn) btn.addEventListener('click', function() {
+      var cur = document.documentElement.getAttribute('data-theme');
+      var next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('velora-theme', next);
+      updateIcon(next);
+    });
+  });
+})();
+</script>
+</body>
+</html>

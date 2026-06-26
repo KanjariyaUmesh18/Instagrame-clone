@@ -1,0 +1,57 @@
+/* ══════════════════════════════════════════════════
+   REELS PAGE
+══════════════════════════════════════════════════ */
+.reels-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.reel-card {
+  position: relative;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  aspect-ratio: 9 / 16;
+  cursor: pointer;
+}
+.reel-card img       { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.reel-card:hover img { transform: scale(1.04); }
+.reel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px;
+}
+.reel-play {
+  align-self: center;
+  margin-top: 30%;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1rem;
+  transition: var(--t);
+}
+.reel-card:hover .reel-play { background: rgba(124, 58, 237, 0.8); }
+.reel-info   { display: flex; justify-content: space-between; align-items: flex-end; }
+.reel-user   { display: flex; align-items: center; gap: 7px; color: #fff; font-size: 0.82rem; font-weight: 500; }
+.reel-user img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid #fff; }
+.reel-views  { color: rgba(255, 255, 255, 0.85); font-size: 0.8rem; display: flex; align-items: center; gap: 4px; }
+
+/* Alignment Fix */
+#reels {
+  align-self: flex-start;
+  min-height: auto;
+}
+#reels .page-content {
+  max-width: 930px;
+  margin: 0 auto;
+  width: 100%;
+}

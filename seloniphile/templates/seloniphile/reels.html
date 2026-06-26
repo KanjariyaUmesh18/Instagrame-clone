@@ -1,0 +1,567 @@
+{% load static %}
+<html lang="en">
+<head>
+<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velora — Reels</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+<style>
+/* ── REELS INSTAGRAM-STYLE ───────────────────── */
+body { overflow: hidden; }
+.pages-wrapper { overflow: hidden; }
+
+/* Reels container — full height snap scroll */
+.reels-container {
+  flex: 1;
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  background: #000;
+  scrollbar-width: none;
+}
+.reels-container::-webkit-scrollbar { display: none; }
+
+/* Each reel = full viewport height */
+.reel-slide {
+  scroll-snap-align: start;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  overflow: hidden;
+}
+
+/* Background image fills the reel */
+.reel-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.75);
+  transition: filter 0.3s;
+}
+.reel-slide:hover .reel-bg { filter: brightness(0.6); }
+
+/* Gradient overlays */
+.reel-gradient-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 120px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+.reel-gradient-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 280px;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Play/pause overlay center */
+.reel-play-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.reel-slide:hover .reel-play-center { opacity: 1; }
+.play-icon-circle {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; color: #fff;
+  border: 2px solid rgba(255,255,255,0.4);
+  transition: all 0.2s;
+}
+.play-icon-circle:hover { background: rgba(124,58,237,0.7); border-color: #7c3aed; transform: scale(1.08); }
+
+/* Bottom info */
+.reel-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 70px;
+  padding: 0 20px 24px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reel-user-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.reel-user-av {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  flex-shrink: 0;
+}
+.reel-username {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.reel-follow-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1.5px solid #fff;
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+}
+.reel-follow-btn:hover,
+.reel-follow-btn.following {
+  background: rgba(124,58,237,0.8);
+  border-color: #7c3aed;
+}
+.reel-follow-btn.following { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.4); }
+.reel-caption {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.92);
+  line-height: 1.5;
+  max-width: 340px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+.reel-caption .tag { color: #c4b5fd; }
+.reel-audio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.8);
+}
+.reel-audio-row i { font-size: 0.75rem; animation: spin 3s linear infinite; }
+@keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+/* Right action buttons */
+.reel-actions {
+  position: absolute;
+  right: 14px;
+  bottom: 60px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.reel-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'Outfit', sans-serif;
+}
+.reel-action-btn i {
+  font-size: 1.5rem;
+  transition: transform 0.2s, color 0.2s;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.5));
+}
+.reel-action-btn:hover i { transform: scale(1.2); }
+.reel-action-btn.liked i { color: #e11d48; }
+.reel-action-btn.liked { animation: heartPop 0.3s ease; }
+@keyframes heartPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+.reel-action-btn span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+.reel-share-av {
+  width: 36px; height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+/* Progress bar */
+.reel-progress {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.2);
+  z-index: 6;
+}
+.reel-progress-bar {
+  height: 100%;
+  background: rgba(255,255,255,0.85);
+  width: 0%;
+  transition: width 0.3s linear;
+}
+
+/* Sound toggle */
+.reel-sound-btn {
+  position: absolute;
+  top: 16px; right: 16px;
+  z-index: 6;
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: #fff;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+}
+.reel-sound-btn:hover { background: rgba(124,58,237,0.7); }
+
+/* Comment drawer */
+.reel-comment-drawer {
+  position: fixed;
+  bottom: 0; left: var(--sidebar-w); right: 0;
+  height: 0;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-radius: 24px 24px 0 0;
+  z-index: 200;
+  overflow: hidden;
+  transition: height 0.35s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  flex-direction: column;
+}
+.reel-comment-drawer.open { height: 60vh; }
+.drawer-handle {
+  width: 36px; height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 12px auto 8px;
+  flex-shrink: 0;
+}
+.drawer-title {
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.drawer-close {
+  position: absolute; top: 10px; right: 16px;
+  background: none; border: none; color: var(--muted);
+  font-size: 1.1rem; cursor: pointer; padding: 4px;
+}
+.drawer-comment-list {
+  flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 14px;
+}
+.drawer-comment-item { display: flex; gap: 10px; }
+.drawer-comment-av { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.drawer-comment-body { flex: 1; }
+.drawer-comment-name { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+.drawer-comment-text { font-size: 0.88rem; color: var(--text); line-height: 1.4; margin-top: 2px; }
+.drawer-comment-time { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
+.drawer-input-row {
+  display: flex; gap: 10px; align-items: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--bg2);
+}
+.drawer-input-row img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.drawer-input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 9px 16px;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.drawer-input:focus { border-color: var(--accent); }
+.drawer-input::placeholder { color: var(--muted); }
+.drawer-post-btn {
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 22px; padding: 8px 16px;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+}
+.drawer-post-btn:hover { background: #5b21b6; }
+
+/* Sidebar stays white text on dark */
+.sidebar { z-index: 300; }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">Kit<span>nagram</span></div>
+  <div class="nav-links">
+    <a href="{% url 'home' %}"          class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+    <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+    <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
+    <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
+    <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
+    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
+    <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
+    <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
+    <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
+    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+    <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+      <span class="nav-icon"><img src="{{uid.profile_pic.url}}" alt="Profile"></span>
+      <span class="nav-label">Profile</span>
+    </a>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="nav-bottom">
+    <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+    <a href="{% url 'login' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+  </div>
+</nav>
+
+<div class="pages-wrapper">
+<!-- REELS FULL-SCREEN VERTICAL SCROLL -->
+<div class="reels-container" id="reelsContainer">
+
+  <!-- REEL 1 -->
+  {% for r in reels %}
+  <div class="reel-slide">
+    <div class="reel-progress"><div class="reel-progress-bar" style="width:65%"></div></div>
+    <video class="reel-bg"
+       controls
+       autoplay
+       loop
+       playsinline>
+
+        <source src="{{ r.video.url }}" type="video/mp4">
+
+    </video>
+    <div class="reel-gradient-top"></div>
+    <div class="reel-gradient-bottom"></div>
+    
+    <button class="reel-sound-btn"><i class="fa-solid fa-volume-high"></i></button>
+    <div class="reel-bottom">
+      <div class="reel-user-row">
+        <img class="reel-user-av" src="{{ r.user.profile_pic.url }}">
+        <span class="reel-username">{{r.user.username}}</span>
+        </div>
+      <div class="reel-caption">{{r.caption}}</div>
+      <div class="reel-audio-row"><i class="fa-solid fa-music"></i> <span>Original Audio · {{r.user.username}}</span></div>
+    </div>
+    <div class="reel-actions">
+      <!-- <a href="{% url 'LikeUnlike' pk=r.id %}" class="act-btn like-btn" ><i class="fa-regular fa-heart"></i></a>
+            <form action="{% url 'comment_post' pk=r.id %}" method="POST" class="comment-form">
+                {% csrf_token %}
+
+                <i class="fa-regular fa-face-smile comment-icon"></i>
+
+                <input
+                    type="text"
+                    name="comment"
+                    class="comment-input"
+                    placeholder="Add a comment..."
+                    required
+                >
+
+                <button type="submit" class="comment-btn">
+                    Post
+                </button>
+            </form> -->
+      <button class="reel-action-btn">
+        <i class="fa-regular fa-paper-plane"></i>
+        <span>Share</span>
+      </button>
+      <button class="reel-action-btn">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </button>
+      <img class="reel-share-av" src="{{r.user.profile_pic.url}}">
+    </div>
+  </div>
+  {% endfor %}
+
+  
+
+</div><!-- /reels-container -->
+</div><!-- /pages-wrapper -->
+
+<!-- COMMENT DRAWER (Instagram jaisa bottom sheet) -->
+<div class="reel-comment-drawer" id="commentDrawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-title">
+    Comments
+    <button class="drawer-close" onclick="closeComments()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="drawer-comment-list" id="drawerCommentList">
+    <!-- filled by JS -->
+  </div>
+  <div class="drawer-input-row">
+    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80">
+    <input class="drawer-input" placeholder="Add a comment…" id="drawerInput" onkeydown="if(event.key==='Enter') postDrawerComment()">
+    <button class="drawer-post-btn" onclick="postDrawerComment()">Post</button>
+  </div>
+</div>
+
+<!-- Backdrop to close drawer -->
+<div id="drawerBackdrop" onclick="closeComments()" style="display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.3);"></div>
+
+<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+
+<script>
+(function() {
+  var saved = localStorage.getItem('velora-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  function updateIcon(t) {
+    var ic = document.getElementById('themeIcon');
+    if (ic) ic.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  }
+  updateIcon(saved);
+  window.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('themeToggle');
+    if (btn) btn.addEventListener('click', function() {
+      var cur = document.documentElement.getAttribute('data-theme');
+      var next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('velora-theme', next);
+      updateIcon(next);
+    });
+  });
+})();
+
+/* Reel like */
+function toggleReelLike(btn) {
+  var icon = btn.querySelector('i');
+  var span = btn.querySelector('span');
+  if (btn.classList.contains('liked')) {
+    btn.classList.remove('liked');
+    icon.className = 'fa-regular fa-heart';
+  } else {
+    btn.classList.add('liked');
+    icon.className = 'fa-solid fa-heart';
+  }
+}
+
+/* Reel follow */
+function toggleReelFollow(btn) {
+  if (btn.classList.contains('following')) {
+    btn.classList.remove('following');
+    btn.textContent = 'Follow';
+  } else {
+    btn.classList.add('following');
+    btn.textContent = 'Following';
+  }
+}
+
+/* Comment drawer */
+var reelComments = [
+  [
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iIzA2YjZkNCIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+TFc8L3RleHQ+PC9zdmc+',name:'leo.winters',text:'Santorini is unreal! 🌊',time:'2h'},
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2VmNDQ0NCIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+U008L3RleHQ+PC9zdmc+',name:'sofie.m',text:'Adding this to my bucket list! 😍',time:'1h'},
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iIzE0YjhhNiIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+TUQ8L3RleHQ+PC9zdmc+',name:'marco.d',text:'The colors in this video are insane 🎨',time:'30m'},
+  ],
+  [
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2Y1OWUwYiIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+TkY8L3RleHQ+PC9zdmc+',name:'nora.f',text:'Sakura season is so beautiful 🌸',time:'5h'},
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2Y5NzMxNiIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+UFM8L3RleHQ+PC9zdmc+',name:'priya.sharma',text:'Japan is on my list! When did you go?',time:'3h'},
+  ],
+  [
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2VjNDg5OSIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+Wks8L3RleHQ+PC9zdmc+',name:'zara.kashyap',text:'Ocean therapy!! This is everything 🌊',time:'1d'},
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iIzhiNWNmNiIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+SkI8L3RleHQ+PC9zdmc+',name:'julian.b',text:'The sound of waves is so calming 😌',time:'20h'},
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2E4NTVmNyIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+TFY8L3RleHQ+PC9zdmc+',name:'luna.v',text:'I need this in my life right now',time:'12h'},
+  ],
+  [
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iIzEwYjk4MSIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+RVI8L3RleHQ+PC9zdmc+',name:'eli.rahman',text:'Drop the recipe!! 👇',time:'3h'},
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2Y5NzMxNiIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+UFM8L3RleHQ+PC9zdmc+8',name:'kai.nomad',text:'Looks so good I can almost taste it 🤤',time:'1h'},
+  ],
+  [
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iI2Y5NzMxNiIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+UFM8L3RleHQ+PC9zdmc+',name:'priya.sharma',text:'Winter wonderland!! ❄️',time:'6h'},
+    {av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iIzE0YjhhNiIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+TUQ8L3RleHQ+PC9zdmc+',name:'marco.d',text:'What a view to wake up to! 😮',time:'4h'},
+  ],
+];
+var currentReelIndex = 0;
+
+function openComments(index) {
+  currentReelIndex = index;
+  var list = document.getElementById('drawerCommentList');
+  list.innerHTML = '';
+  (reelComments[index] || []).forEach(function(c) {
+    var div = document.createElement('div');
+    div.className = 'drawer-comment-item';
+    div.innerHTML = '<img class="drawer-comment-av" src="'+c.av+'"><div class="drawer-comment-body"><div class="drawer-comment-name">'+c.name+'</div><div class="drawer-comment-text">'+c.text+'</div><div class="drawer-comment-time">'+c.time+' ago</div></div>';
+    list.appendChild(div);
+  });
+  document.getElementById('commentDrawer').classList.add('open');
+  document.getElementById('drawerBackdrop').style.display = 'block';
+  setTimeout(function(){ document.getElementById('drawerInput').focus(); }, 400);
+}
+function closeComments() {
+  document.getElementById('commentDrawer').classList.remove('open');
+  document.getElementById('drawerBackdrop').style.display = 'none';
+}
+function postDrawerComment() {
+  var inp = document.getElementById('drawerInput');
+  var text = inp.value.trim();
+  if (!text) return;
+  var list = document.getElementById('drawerCommentList');
+  var div = document.createElement('div');
+  div.className = 'drawer-comment-item';
+  div.innerHTML = '<img class="drawer-comment-av" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80"><div class="drawer-comment-body"><div class="drawer-comment-name">aria.velora</div><div class="drawer-comment-text">'+text.replace(/</g,'&lt;')+'</div><div class="drawer-comment-time">Just now</div></div>';
+  list.appendChild(div);
+  list.scrollTop = list.scrollHeight;
+  inp.value = '';
+  // also push into data
+  if (!reelComments[currentReelIndex]) reelComments[currentReelIndex] = [];
+  reelComments[currentReelIndex].push({av:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgdmlld0JveD0iMCAwIDgwIDgwIj48cmVjdCB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0MCIgZmlsbD0iIzdjM2FlZCIvPjx0ZXh0IHg9IjQwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+QVY8L3RleHQ+PC9zdmc+',name:'aria.velora',text:text,time:'Just now'});
+}
+
+/* Double tap to like */
+var lastTap = {};
+document.querySelectorAll('.reel-slide').forEach(function(slide, i) {
+  slide.addEventListener('dblclick', function(e) {
+    if (e.target.closest('.reel-actions') || e.target.closest('.reel-bottom') || e.target.closest('.reel-play-center') || e.target.closest('.reel-sound-btn')) return;
+    var likeBtn = slide.querySelector('.reel-action-btn');
+    if (!likeBtn.classList.contains('liked')) {
+      toggleReelLike(likeBtn);
+      // Heart burst effect
+      var heart = document.createElement('div');
+      heart.innerHTML = '❤️';
+      heart.style.cssText = 'position:absolute;font-size:3rem;z-index:10;pointer-events:none;animation:heartBurst 0.6s ease forwards;left:'+e.offsetX+'px;top:'+e.offsetY+'px;transform:translate(-50%,-50%)';
+      slide.appendChild(heart);
+      var style = document.createElement('style');
+      style.textContent = '@keyframes heartBurst{0%{opacity:1;transform:translate(-50%,-50%) scale(0)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.5)}100%{opacity:0;transform:translate(-50%,-80%) scale(1)}}';
+      document.head.appendChild(style);
+      setTimeout(function(){ heart.remove(); }, 700);
+    }
+  });
+});
+</script>
+</body>
+</html>

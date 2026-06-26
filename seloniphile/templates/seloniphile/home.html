@@ -1,0 +1,175 @@
+{% load static %}
+<html lang="en">
+<head>
+<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velora — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+</head>
+<body>
+<nav class="sidebar">
+  <div class="logo">Kit<span>nagram</span></div>
+  <div class="nav-links">
+    <a href="{% url 'home' %}"          class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+    <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+    <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
+    <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
+    <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
+    <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
+    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
+    <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
+    <a href="{% url 'following' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
+    <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+      <span class="nav-icon"><img src="{{uid.profile_pic.url}}" alt="Profile"></span>
+      <span class="nav-label">Profile</span>
+    </a>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="nav-bottom">
+    <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+    <a href="{% url 'login' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+  </div>
+</nav>
+<div class="pages-wrapper">
+<div id="home" class="page page-with-panel" style="display:flex;">
+  {% block content %}
+  <main class="feed-area">
+    <a href="{% url 'view_story' uid.id %}">
+    <div class="stories-row"><div class="story-pill your-story"><div class="story-av">
+      <img src="{{uid.profile_pic.url}}"></a><span class="add-icon">
+        <a href="{% url 'create_story' %}" style="text-decoration: none; ">+</a></span>
+        
+    </div>
+    <span>Your Story</span>
+  </div>
+  <div class="story-pill">
+  {% for f in following_story%}
+  <a href="{% url 'view_story' f.user.id %}" style="text-decoration: none;">
+    <div class="story-av ring">
+      <img src="{{f.user.profile_pic.url}}">
+    </div>
+    <span>{{f.user.username}}</span>
+  </a>
+  {% endfor %}
+  </div>
+</div>
+    {% for post in post_all %}
+    <article class="post-card">
+      <div class="post-head">
+        <div class="post-av">
+          <img src="{{post.user.profile_pic.url}}"></div>
+        <div class="post-info">
+          <div class="post-name">{{post.user.username}}<i class="fa-solid fa-circle-check verified"></i></div>
+          <div class="post-loc"><i class="fa-solid fa-location-dot"></i>{{post.location}}</div>
+        </div>
+        <button class="more-btn"><i class="fa-solid fa-ellipsis"></i></button>
+      </div>
+      <div class="post-img-box">
+        <img src="{{ post.image.url }}" class="post-img">
+        <div class="img-overlay"></div>
+      </div>
+      <div class="post-foot">
+        <div class="actions-row">
+          <div class="left-actions">
+            <a href="{% url 'LikeUnlike' pk=post.id %}" class="act-btn like-btn" ><i class="fa-regular fa-heart"></i></a>
+            <form action="{% url 'comment_post' pk=post.id %}" method="POST" class="comment-form">
+                {% csrf_token %}
+
+                <i class="fa-regular fa-face-smile comment-icon"></i>
+
+                <input
+                    type="text"
+                    name="comment"
+                    class="comment-input"
+                    placeholder="Add a comment..."
+                    required
+                >
+
+                <button type="submit" class="comment-btn">
+                    Post
+                </button>
+            </form>
+            <button class="act-btn"><i class="fa-regular fa-paper-plane"></i></button>
+          </div>
+          <button class="act-btn save-btn" onclick="tgSave(this)"><i class="fa-regular fa-bookmark"></i></button>
+        </div>
+        <div class="likes-count" id="lk1">{{post.like_post.count}} likes</div>
+        <div class="caption"><strong>{{ post.user.username }}</strong> {{ post.caption }}
+        <div class="comments-peek"  style="cursor:pointer;">View all comments</div>
+        <div class="time-stamp">{{post.whenpublished}}</div>
+      </div>
+      <div class="comment-section" id="cm1">
+        <div class="comment-list"><div class="comment-item"><img class="comment-av" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80"><div class="comment-body"><span class="comment-name">leo.winters</span><div class="comment-text">Absolutely stunning! 🌊 One of my favourite places!</div><div class="comment-time">1 hour ago</div></div></div><div class="comment-item"><img class="comment-av" src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&q=80"><div class="comment-body"><span class="comment-name">nora.f</span><div class="comment-text">I need to go back!! Missing Santorini 😭</div><div class="comment-time">45 min ago</div></div></div></div>
+        <div class="comment-input-row">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80">
+          <input class="comment-input" placeholder="Add a comment…" id="ci1" onkeydown="if(event.key==='Enter') postCmt('cm1','ci1')">
+          <button class="comment-post-btn" onclick="postCmt('cm1','ci1')">Post</button>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </main>
+  {% endblock %}
+  <aside class="right-panel">
+    <div class="my-profile-card">
+      <a href="{% url 'profile' %}" style="text-decoration:none;display:flex;align-items:center;gap:inherit;">
+        <div class="my-av-wrap"><img src="{{uid.profile_pic.url}}" class="my-av"></div>
+        <div class="my-details"><div class="my-name">{{uid.username}}</div><div class="my-handle">{{uid.name}}</div></div>
+      </a>
+      <a href="{% url 'logout' %}" class="switch-btn">logout</a>
+    </div>
+    <div class="panel-divider"></div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num">{{post_count}}</div><div class="stat-lbl">Posts</div></div>
+      <div class="stat-box"><div class="stat-num">{{followers}}</div><div class="stat-lbl">Followers</div></div>
+      <div class="stat-box"><div class="stat-num">{{following}}</div><div class="stat-lbl">Following</div></div>
+    </div>
+    <div class="panel-divider"></div>
+    <div class="suggest-head"><span>Suggested for you</span><a href="#" class="see-all-link">See All</a></div>
+    <div class="suggest-list">
+    {% for user in suggested_users %}
+      <div class="suggest-item">
+        <div class="sug-av">
+          <img src="{{user.profile_pic.url}}">
+        </div>
+        <div class="sug-info"><div class="sug-name">{{user.username}}</div>
+        <div class="sug-note">Suggested for you</div>
+      </div>
+      <a class="follow-btn" href="{% url 'follow_unfollow' user.id %}" style="text-decoration: none;">Follow</a>
+    </div>
+    {% endfor %}
+    </div>
+    </aside>
+</div>
+</div>
+<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+<script>
+(function() {
+  var s=localStorage.getItem('velora-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',s);
+  function ui(t){var ic=document.getElementById('themeIcon');if(ic)ic.className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
+  ui(s);
+  window.addEventListener('DOMContentLoaded',function(){
+    var b=document.getElementById('themeToggle');
+    if(b)b.addEventListener('click',function(){
+      var c=document.documentElement.getAttribute('data-theme');
+      var n=c==='dark'?'light':'dark';
+      document.documentElement.setAttribute('data-theme',n);
+      localStorage.setItem('velora-theme',n);ui(n);
+    });
+  });
+})();
+</script>
+<script>
+function parseLk(s){s=s.replace(' likes','').trim();if(s.toLowerCase().endsWith('k'))return parseFloat(s)*1000;if(s.toLowerCase().endsWith('m'))return parseFloat(s)*1e6;return parseInt(s.replace(/,/g,''))||0;}
+function fmtLk(n){if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(1)+'k';return n.toLocaleString();}
+function tgSave(btn){var ic=btn.querySelector('i');if(btn.classList.contains('saved')){btn.classList.remove('saved');ic.className='fa-regular fa-bookmark';}else{btn.classList.add('saved');ic.className='fa-solid fa-bookmark';}}
+function postCmt(sid,iid){var inp=document.getElementById(iid);var txt=inp.value.trim();if(!txt)return;var list=document.getElementById(sid).querySelector('.comment-list');var nc=list.querySelector('.no-comments');if(nc)nc.remove();var d=document.createElement('div');d.className='comment-item';d.innerHTML='<img class="comment-av" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80"><div class="comment-body"><span class="comment-name">aria.velora</span><div class="comment-text">'+txt.replace(/</g,'&lt;')+'</div><div class="comment-time">Just now</div></div>';list.appendChild(d);list.scrollTop=list.scrollHeight;inp.value='';}
+
+</script>
+</body>
+</html>

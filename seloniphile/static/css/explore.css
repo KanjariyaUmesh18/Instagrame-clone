@@ -1,0 +1,44 @@
+/* ══════════════════════════════════════════════════
+   EXPLORE PAGE
+══════════════════════════════════════════════════ */
+.explore-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.etab {
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: var(--t);
+}
+.etab:hover,
+.etab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.explore-grid       { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 170px; gap: 6px; }
+.explore-grid.big   { grid-auto-rows: 210px; }
+.explore-item       { position: relative; overflow: hidden; border-radius: var(--r-md); cursor: pointer; }
+.explore-item.tall  { grid-row: span 2; }
+.explore-item img   { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.explore-item:hover img { transform: scale(1.06); }
+.explore-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 10px 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.65), transparent);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+/* Alignment Fix */
+#explore {
+  align-self: flex-start;
+  min-height: auto;
+}
+#explore .page-content {
+  max-width: 930px;
+  margin: 0 auto;
+  width: 100%;
+}

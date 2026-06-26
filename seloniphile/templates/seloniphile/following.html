@@ -1,0 +1,114 @@
+{% load static %}
+<html lang="en">
+<head>
+<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("velora-theme") || "dark");</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velora — Following</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/userpanel.css' %}">
+<style>
+.ff-page { flex:1; padding:32px 40px; max-width:760px; }
+.ff-page-title { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; color:var(--text); margin-bottom:6px; }
+.ff-page-sub { font-size:.9rem; color:var(--muted); margin-bottom:28px; }
+.ff-search-bar { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:10px 16px; color:var(--text); font-family:'Outfit',sans-serif; font-size:.95rem; outline:none; margin-bottom:24px; transition:border-color .2s; }
+.ff-search-bar:focus { border-color:var(--accent); }
+.ff-search-bar::placeholder { color:var(--muted); }
+.ff-list-page { display:flex; flex-direction:column; gap:0; }
+.ff-row { display:flex; align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid var(--border); transition:background .15s; }
+.ff-row:last-child { border-bottom:none; }
+.ff-row:hover { background:var(--bg3); border-radius:12px; padding-left:10px; padding-right:10px; margin:0 -10px; }
+.ff-big-av { width:52px; height:52px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+.ff-row-info { flex:1; min-width:0; }
+.ff-row-name { font-size:.95rem; font-weight:700; color:var(--text); }
+.ff-row-note { font-size:.82rem; color:var(--muted); margin-top:2px; }
+.ff-row-mutual { font-size:.78rem; color:var(--accent); margin-top:2px; }
+.ff-action-btn {
+  background:none; border:1.5px solid var(--border); color:var(--text);
+  border-radius:8px; padding:7px 18px; font-size:.85rem; font-weight:600;
+  cursor:pointer; font-family:'Outfit',sans-serif; transition:all .2s;
+  white-space:nowrap;
+}
+.ff-action-btn:hover { border-color:var(--accent); color:var(--accent); }
+.ff-action-btn.danger:hover { border-color:#e11d48; color:#e11d48; background:rgba(225,29,72,.06); }
+.ff-count-badge { display:inline-flex; align-items:center; justify-content:center; background:var(--accent); color:#fff; font-size:.75rem; font-weight:700; padding:2px 10px; border-radius:20px; margin-left:10px; }
+.ff-empty { text-align:center; color:var(--muted); padding:60px 0; font-size:.95rem; }
+.ff-empty i { font-size:2.5rem; display:block; margin-bottom:12px; opacity:.4; }
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="logo">Kit<span>nagram</span></div>
+  <div class="nav-links">
+    <a href="{% url 'home' %}"          class="nav-item"><span class="nav-icon"><i class="fa-solid fa-house"></i></span><span class="nav-label">Home</span></a>
+    <a href="{% url 'search' %}"        class="nav-item"><span class="nav-icon"><i class="fa-solid fa-magnifying-glass"></i></span><span class="nav-label">Search</span></a>
+    <a href="{% url 'explore' %}"       class="nav-item"><span class="nav-icon"><i class="fa-solid fa-compass"></i></span><span class="nav-label">Explore</span></a>
+    <a href="{% url 'reels' %}"         class="nav-item"><span class="nav-icon"><i class="fa-solid fa-film"></i></span><span class="nav-label">Reels</span></a>
+    <a href="{% url 'messages' %}"      class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-paper-plane"></i></span><span class="nav-label">Messages</span><span class="badge">4</span></a>
+    <a href="{% url 'notifications' %}" class="nav-item has-badge"><span class="nav-icon"><i class="fa-solid fa-bell"></i></span><span class="nav-label">Notifications</span><span class="badge red">7</span></a>
+    <a href="{% url 'create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create</span></a>
+    <a href="{% url 'reel_create' %}"        class="nav-item"><span class="nav-icon"><i class="fa-regular fa-square-plus"></i></span><span class="nav-label">Create Reel</span></a>
+    <a href="{% url 'followers' %}"     class="nav-item"><span class="nav-icon"><i class="fa-solid fa-user-group"></i></span><span class="nav-label">Followers</span></a>
+    <a href="{% url 'following' %}"     class="nav-item  active"><span class="nav-icon"><i class="fa-solid fa-user-check"></i></span><span class="nav-label">Following</span></a>
+    <a href="{% url 'profile' %}" class="sidebar-profile-mini">
+      <span class="nav-icon"><img src="{{uid.profile_pic.url}}"></span>
+      <span class="nav-label">Profile</span>
+    </a>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="nav-bottom">
+    <a href="{% url 'settings' %}" class="nav-item"><span class="nav-icon"><i class="fa-solid fa-gear"></i></span><span class="nav-label">Settings</span></a>
+    <a href="{% url 'login' %}" class="nav-item logout-btn"><span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span><span class="nav-label">Logout</span></a>
+  </div>
+</nav>
+<div class="pages-wrapper">
+<div id="following-page" class="page page-full" style="display:block;">
+  <div class="ff-page">
+    <div class="ff-page-title">Following <span class="ff-count-badge" id="gcount">6</span></div>
+    <div class="ff-page-sub">People you follow</div>
+    <input class="ff-search-bar" placeholder="🔍 Search following…" oninput="filterFF(this.value,'ff-following-list')">
+    <div class="ff-list-page" id="ff-following-list">
+    {% for user in users %}
+    <div class="ff-row" id="fgr-zara">
+      <img class="ff-big-av" src="{{user.profile_pic.url}}">
+      <div class="ff-row-info">
+        <div class="ff-row-name">{{user.username}}</div>
+        <div class="ff-row-note">{{user.name}}</div>
+        <div class="ff-row-mutual"><i class="fa-solid fa-user-group" style="font-size:.7rem"></i> Also followed by leo.winters • nora.f</div>
+      </div>
+      {% if user.id in my_following %}
+      <a href="{% url 'follow_unfollow' pk=user.id %}" class="ff-action-btn danger" >Unfollow</a>
+      {% else %}
+      <a href="{% url 'follow_unfollow' pk=user.id %}" class="ff-action-btn danger" >Follow</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    </div>
+  </div>
+</div>
+</div>
+<button class="theme-toggle" id="themeToggle" title="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+<script>
+(function() {
+  var s=localStorage.getItem('velora-theme')||'dark';
+  document.documentElement.setAttribute('data-theme',s);
+  function ui(t){var ic=document.getElementById('themeIcon');if(ic)ic.className=t==='dark'?'fa-solid fa-sun':'fa-solid fa-moon';}
+  ui(s);
+  window.addEventListener('DOMContentLoaded',function(){
+    var b=document.getElementById('themeToggle');
+    if(b)b.addEventListener('click',function(){
+      var c=document.documentElement.getAttribute('data-theme');
+      var n=c==='dark'?'light':'dark';
+      document.documentElement.setAttribute('data-theme',n);
+      localStorage.setItem('velora-theme',n);ui(n);
+    });
+  });
+})();
+</script>
+<script>
+function filterFF(q,listId){var rows=document.getElementById(listId).querySelectorAll('.ff-row');q=q.toLowerCase();rows.forEach(function(r){var name=r.querySelector('.ff-row-name');r.style.display=(name&&name.textContent.toLowerCase().includes(q))?'':'none';});}
+</script>
+</body>
+</html>
