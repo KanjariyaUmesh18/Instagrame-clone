@@ -31,7 +31,6 @@ urlpatterns = [
     path('reels/', views.reels, name='reels'),
     path('register/', views.register, name='register'),
     path('search/', views.search, name='search'),
-    path('settings/', views.settings, name='settings'),
     path('followers/', views.followers, name='followers'),
     path('following/', views.following, name='following'),
     path('follow_unfollow/<int:pk>', views.follow_unfollow, name='follow_unfollow'),
@@ -43,7 +42,8 @@ urlpatterns = [
     path('reel_create/', views.reel_create, name='reel_create'),
     path('create_story/', views.create_story, name='create_story'),
     path('view_story/<int:user_id>', views.view_story, name='view_story'),
-    path('user_profile/<int:id>/', views.user_profile, name='user_profile')
+    path('user_profile/<int:id>/', views.user_profile, name='user_profile'),
+    path('send-message/<int:pk>', views.send_message, name='send-message'),
     
 
 

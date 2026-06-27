@@ -174,6 +174,31 @@ def messages(request,pk=None):
     return render(request,'seloniphile/messages.html',context)
 
 @checkLoggin
+def send_message(request,pk):
+    if request.POST:
+        uid = request.uid
+        sender = InstaUser.objects.get(id = uid.id)
+        reciever = InstaUser.objects.get(id=pk)
+        conversation_room = get_or_create_chatRoom(sender,reciever)
+
+        text_message = request.POST['message_text']
+
+        msg_obj = Message.objects.create(
+            chat_room = conversation_room,
+            sender_id = sender,
+            text_message = text_message, 
+            )
+
+        if "image" in request.FILES:
+            image = request.FILES['image']
+            msg_obj.save()
+        if "video" in request.FILES:
+            image = request.FILES['image']
+            msg_obj.save()
+
+        return redirect('messages',pk=reciever.id)
+
+@checkLoggin
 def notifications(request):
     uid = request.uid
 
@@ -283,15 +308,6 @@ def search(request):
 
           users = InstaUser.objects.filter(username__icontains=search)
      return render(request,"seloniphile/search.html",{"users":users})
-
-@checkLoggin
-def settings(request):
-    uid = request.uid
-
-    context = {
-         "uid" : uid
-    }
-    return render(request,'seloniphile/settings.html',context)
 
 @checkLoggin
 def followers(request):

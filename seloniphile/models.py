@@ -277,6 +277,7 @@ class ChatRoom(models.Model):
 
 class Message(models.Model):
     chat_room = models.ForeignKey(ChatRoom,on_delete=models.CASCADE,related_name="chatroom")
+    sender_id = models.ForeignKey(InstaUser,on_delete=models.CASCADE,related_name="senderby",null=True,blank=True)
     text_message = models.CharField(max_length=100)
     image = models.FileField(null=True,blank=True)
     video = models.FileField(null=True,blank=True)
