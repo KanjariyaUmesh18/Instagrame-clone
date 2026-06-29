@@ -475,15 +475,15 @@ def create_story(request):
 
 @checkLoggin
 def view_story(request,user_id):
-     uid = request.uid
+    uid = request.uid
 
-     v_story = CreateStory.objects.filter(user_id = user_id).order_by("-created_at")
+    v_story = CreateStory.objects.filter(user_id = user_id).order_by("-created_at")
 
-     context = {
-          "v_story" : v_story
-     }
+    context = {
+        "v_story" : v_story
+    }
 
-     return render(request,"seloniphile/view_stoy.html",context)
+    return render(request,"seloniphile/view_stoy.html",context)
 
 @checkLoggin
 def user_profile(request,id):
@@ -513,5 +513,3 @@ def user_profile(request,id):
         return render(request,'seloniphile/profile.html',context)
      
      
-
-
